@@ -1,26 +1,128 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-background: #0a0a0a;
+  --color-background-elevated: #111111;
+  --color-background-hover: #1a1a1a;
+
+  --color-foreground: #f5f5f5;
+  --color-foreground-muted: #a3a3a3;
+  --color-foreground-subtle: #525252;
+
+  --color-border: #222222;
+  --color-border-hover: #333333;
+
+  --color-accent: #94a3b8;
+  --color-accent-muted: #64748b;
+  --color-accent-glow: rgba(148, 163, 184, 0.15);
+
+  --font-sans: "Inter", "system-ui", "sans-serif";
+  --font-mono: "JetBrains Mono", "monospace";
+
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+
+  --animate-fade-in: fadeIn 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  --animate-slide-up: slideUp 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    @apply selection:bg-accent/30 selection:text-foreground;
+  }
+
+  /* Custom scrollbar — engineered, minimal */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #444444;
+  }
+
+  /* Typography defaults */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-foreground font-sans tracking-tight;
+  }
+
+  p {
+    @apply text-foreground-muted leading-relaxed;
+  }
+
+  a {
+    @apply text-foreground transition-colors duration-200;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply max-w-[1200px] mx-auto px-6 md:px-12 lg:px-16;
+  }
+
+  .section-padding {
+    @apply py-24 md:py-32;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-b from-foreground to-foreground-muted bg-clip-text text-transparent;
+  }
+
+  .glow-subtle {
+    box-shadow: 0 0 40px -10px rgba(148, 163, 184, 0.15);
+  }
+
+  .border-subtle {
+    @apply border border-border;
+  }
 }
