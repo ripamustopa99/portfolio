@@ -4,7 +4,6 @@
 import Link from "next/link";
 import { Mail, FileText, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
-import { trackEvent } from "@/lib/analytics";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -29,7 +28,6 @@ export default function Footer() {
                 href={siteConfig.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackEvent("download_resume")}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200"
               >
                 <FileText size={14} />

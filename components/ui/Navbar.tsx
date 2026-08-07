@@ -8,7 +8,6 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Menu, X, FileText, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site-config";
-import { trackEvent } from "@/lib/analytics";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -135,7 +134,6 @@ export default function Navbar() {
                 href={siteConfig.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackEvent("download_resume")}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
               >
                 <FileText size={13} />
@@ -203,10 +201,7 @@ export default function Navbar() {
                   href={siteConfig.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => {
-                    trackEvent("download_resume");
-                    setMobileMenuOpen(false);
-                  }}
+                  onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-surface border border-border text-sm font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
                 >
                   <FileText size={16} />

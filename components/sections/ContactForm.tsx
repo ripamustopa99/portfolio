@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Mail, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import ScrollReveal from "@/components/ui/ScrollReveal";
-import { trackEvent } from "@/lib/analytics";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -54,7 +53,6 @@ export default function ContactForm() {
 
       if (result.success) {
         setStatus("success");
-        trackEvent("contact_form_submitted");
         setFormData({ name: "", email: "", message: "", botcheck: "" });
       } else {
         setStatus("error");
