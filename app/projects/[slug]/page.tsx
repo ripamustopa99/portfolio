@@ -4,8 +4,7 @@ import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 import { formatDate } from "@/lib/utils";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import Tag from "@/components/ui/Tag";
-import GlowButton from "@/components/ui/GlowButton";
-import { ExternalLink } from "lucide-react";
+import ProjectActionLinks from "@/components/ui/ProjectActionLinks";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -62,29 +61,7 @@ export default async function CaseStudyPage({ params }: Props) {
 
               <div className="flex flex-wrap items-center gap-6 text-sm text-foreground-subtle font-mono">
                 <span>{formatDate(project.date)}</span>
-
-                {project.links.live && (
-                  <GlowButton
-                    href={project.links.live}
-                    external
-                    variant="secondary"
-                    className="text-xs"
-                  >
-                    <ExternalLink size={14} className="mr-2" />
-                    Live Demo
-                  </GlowButton>
-                )}
-
-                {project.links.github && (
-                  <GlowButton
-                    href={project.links.github}
-                    external
-                    variant="secondary"
-                    className="text-xs"
-                  >
-                    {/* <Github size={14} className="mr-2" /> */}@ Source Code
-                  </GlowButton>
-                )}
+                <ProjectActionLinks slug={project.slug} links={project.links} />
               </div>
             </header>
           </ScrollReveal>

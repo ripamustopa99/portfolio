@@ -1,4 +1,6 @@
 // components/ui/GlowButton.tsx
+"use client";
+
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
