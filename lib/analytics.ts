@@ -1,12 +1,13 @@
 // lib/analytics.ts
-import { track } from "@vercel/analytics";
-
 export function trackEvent(
   name: string,
   properties?: Record<string, string | number | boolean>
 ) {
   try {
-    track(name, properties);
+    if (typeof window !== "undefined" && (window as any).cfBeacon) {
+      // Cloudflare Web Analytics custom event tracking
+      (window as any).cfBeacon.track(name, properties);
+    }
   } catch (error) {
     console.error("Analytics error:", error);
   }
