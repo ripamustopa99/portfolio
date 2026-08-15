@@ -104,10 +104,10 @@ export default async function DashboardPage({
               <BarChart3 size={18} className="text-accent" />
             </div>
             <div className="text-3xl font-bold text-foreground font-mono">
-              {stats.projectViews.reduce((acc, p) => acc + p._count._all, 0) +
-                stats.projectDemoClicks.reduce((acc, p) => acc + p._count._all, 0) +
-                stats.projectGithubClicks.reduce((acc, p) => acc + p._count._all, 0) +
-                stats.contactClicks.reduce((acc, c) => acc + c._count._all, 0)}
+              {stats.projectViews.reduce((acc: number, p: { _count: { _all: number } }) => acc + p._count._all, 0) +
+                stats.projectDemoClicks.reduce((acc: number, p: { _count: { _all: number } }) => acc + p._count._all, 0) +
+                stats.projectGithubClicks.reduce((acc: number, p: { _count: { _all: number } }) => acc + p._count._all, 0) +
+                stats.contactClicks.reduce((acc: number, c: { _count: { _all: number } }) => acc + c._count._all, 0)}
             </div>
             <p className="text-[11px] text-foreground-subtle">Clicks, views & actions</p>
           </div>
@@ -125,7 +125,7 @@ export default async function DashboardPage({
               <p className="text-xs text-foreground-subtle py-6 text-center">No project interactions recorded yet.</p>
             ) : (
               <div className="space-y-3">
-                {stats.projectViews.map((p) => (
+                {stats.projectViews.map((p: { target: string | null; _count: { _all: number } }) => (
                   <div key={p.target} className="flex items-center justify-between p-3 rounded-lg bg-background/50 border border-border text-xs">
                     <span className="font-mono font-medium text-foreground">{p.target}</span>
                     <div className="flex items-center gap-4 text-foreground-muted">
@@ -147,7 +147,7 @@ export default async function DashboardPage({
               <p className="text-xs text-foreground-subtle py-6 text-center">No contact clicks recorded yet.</p>
             ) : (
               <div className="space-y-3">
-                {stats.contactClicks.map((c) => (
+                {stats.contactClicks.map((c: { target: string | null; _count: { _all: number } }) => (
                   <div key={c.target} className="flex items-center justify-between p-3 rounded-lg bg-background/50 border border-border text-xs">
                     <span className="font-mono font-medium text-foreground">{c.target}</span>
                     <span className="text-accent font-mono">{c._count._all} clicks</span>
