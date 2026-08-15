@@ -107,15 +107,15 @@ export default function AboutPage() {
           <div className="space-y-12">
             <ScrollReveal>
               <div className="prose prose-invert space-y-6">
-                <p className="text-xl text-foreground leading-relaxed font-medium">
-                  Hi, I'm Ripa Mustopa A — a software engineer and system architect with a passion for building robust web applications and scalable backend architectures.
-                </p>
-                <p className="text-foreground-muted leading-relaxed">
-                  My work spans across full-stack engineering, distributed systems, and database optimization. I care deeply about clean code architecture, developer experience, and delivering measurable business outcomes.
-                </p>
-                <p className="text-foreground-muted leading-relaxed">
-                  When I'm not writing code or architecting cloud systems, I explore new technologies, write technical notes, and refine high-performance web products.
-                </p>
+                 <p className="text-xl text-foreground leading-relaxed font-medium">
+                   Hi, I&apos;m Ripa Mustopa A — a software engineer and system architect with a passion for building robust web applications and scalable backend architectures.
+                 </p>
+                 <p className="text-foreground-muted leading-relaxed">
+                   My work spans across full-stack engineering, distributed systems, and database optimization. I care deeply about clean code architecture, developer experience, and delivering measurable business outcomes.
+                 </p>
+                 <p className="text-foreground-muted leading-relaxed">
+                   When I&apos;m not writing code or architecting cloud systems, I explore new technologies, write technical notes, and refine high-performance web products.
+                 </p>
               </div>
             </ScrollReveal>
 

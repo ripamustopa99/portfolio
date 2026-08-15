@@ -42,7 +42,7 @@ export default function AboutSection() {
             <ScrollReveal>
               <div className="prose prose-invert space-y-6">
                 <p className="text-xl text-foreground leading-relaxed font-medium">
-                  Hi, I'm Ripa Mustopa A — a software engineer and system architect with a passion for building robust web applications and scalable backend architectures.
+                  Hi, I&apos;m Ripa Mustopa A — a software engineer and system architect with a passion for building robust web applications and scalable backend architectures.
                 </p>
                 <p className="text-foreground-muted leading-relaxed">
                   My work spans across full-stack engineering, distributed systems, and database optimization. I care deeply about clean code architecture, developer experience, and delivering measurable business outcomes.

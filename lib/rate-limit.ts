@@ -8,6 +8,7 @@ export async function checkRateLimit(
 ): Promise<{ blocked: boolean; resetInMs: number }> {
   const now = new Date();
   const nowMs = now.getTime();
+  void windowMs;
 
   // Clean up expired records
   try {
@@ -44,6 +45,7 @@ export async function recordFailedAttempt(
   const now = new Date();
   const nowMs = now.getTime();
   const resetTime = new Date(nowMs + windowMs);
+  void limit;
 
   const existing = await prisma.rateLimit.findUnique({
     where: { key },

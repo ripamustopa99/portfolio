@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, FileText, ArrowUpRight } from "lucide-react";
+import { Mail, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import { trackEvent } from "@/lib/track-client";
 

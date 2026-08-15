@@ -13,13 +13,13 @@ export default function CallToAction() {
         <ScrollReveal>
           <div className="max-w-3xl mx-auto space-y-6">
             <span className="font-mono text-xs uppercase tracking-widest text-accent">
-              LET'S BUILD SOMETHING AMAZING
+              LET&apos;S BUILD SOMETHING AMAZING
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-tight">
               Have a project in mind or want to collaborate?
             </h2>
             <p className="text-foreground-muted text-base sm:text-lg max-w-xl mx-auto">
-              I'm always open to discussing new engineering challenges, product ideas, or partnership opportunities.
+              I&apos;m always open to discussing new engineering challenges, product ideas, or partnership opportunities.
             </p>
             <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
               <GlowButton href="/contact/" variant="primary">
