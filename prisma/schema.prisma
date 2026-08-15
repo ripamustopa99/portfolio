@@ -1,0 +1,52 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  passwordHash      String    @map("password_hash")
+  passwordChangedAt DateTime? @map("password_changed_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  sessions          Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id // session token hash
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("sessions")
+}
+
+model RateLimit {
+   key       String   @id
+   count     Int      @default(1)
+   resetTime DateTime @map("reset_time")
+
+   @@map("rate_limits")
+}
+
+model AnalyticsEvent {
+   id        String   @id @default(uuid())
+   eventType String   @map("event_type") // page_view, project_view, project_demo_click, project_github_click, resume_download, contact_click
+   target    String?  // project slug or action target
+   visitorId String?  @map("visitor_id") // unique visitor cookie
+   ipAddress String?  @map("ip_address")
+   createdAt DateTime @default(now()) @map("created_at")
+
+   @@map("analytics_events")
+}

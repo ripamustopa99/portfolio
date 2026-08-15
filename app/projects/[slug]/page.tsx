@@ -1,10 +1,14 @@
 // app/projects/[slug]/page.tsx
 import { notFound } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 import { formatDate } from "@/lib/utils";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import Tag from "@/components/ui/Tag";
 import ProjectActionLinks from "@/components/ui/ProjectActionLinks";
+import ProjectViewTracker from "@/components/analytics/ProjectViewTracker";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -41,10 +45,19 @@ export default async function CaseStudyPage({ params }: Props) {
 
   return (
     <article className="pt-32 pb-24">
+      <ProjectViewTracker slug={slug} />
       <div className="container-custom">
         <div className="max-w-[720px] mx-auto">
           <ScrollReveal>
-            <header className="mb-16">
+            <Link
+              href="/projects/"
+              className="inline-flex items-center text-sm text-foreground-muted hover:text-foreground mb-12 transition-colors"
+            >
+              <ArrowLeft size={16} className="mr-2" />
+              Back to Projects
+            </Link>
+
+            <header className="mb-12">
               <div className="flex flex-wrap gap-2 mb-6">
                 {project.tags.map((tag) => (
                   <Tag key={tag}>{tag}</Tag>
@@ -65,6 +78,21 @@ export default async function CaseStudyPage({ params }: Props) {
               </div>
             </header>
           </ScrollReveal>
+
+          {/* Project Thumbnail Image Banner */}
+          {project.thumbnail && (
+            <ScrollReveal delay={0.05}>
+              <div className="relative aspect-[16/9] mb-16 overflow-hidden rounded-xl border border-border bg-background-elevated shadow-xl">
+                <Image
+                  src={project.thumbnail}
+                  alt={project.title}
+                  fill
+                  priority
+                  className="object-cover"
+                />
+              </div>
+            </ScrollReveal>
+          )}
 
           <ScrollReveal delay={0.1}>
             <div className="mb-16 p-6 bg-background-elevated border border-border rounded-lg">

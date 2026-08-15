@@ -1,9 +1,9 @@
 // lib/site-config.ts
 export const siteConfig = {
-  name: "Your Name",
-  brand: "yourname.dev",
+  name: "Ripa Mustopa A",
+  brand: "ripamustopa99.dev",
   tagline: "Building robust web applications and digital experiences with modern technologies.",
-  url: "https://yourname.dev",
+  url: "https://ripamustopa99.dev",
   version: "0.1.0",
   lastUpdated: "June 2026",
   resumeUrl: "/resume.pdf",

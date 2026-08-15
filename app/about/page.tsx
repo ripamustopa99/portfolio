@@ -1,67 +1,88 @@
 // app/about/page.tsx
+import Image from "next/image";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import ParallaxSection from "@/components/ui/ParallaxSection";
 
 export const metadata = {
-  title: "About — Your Name",
+  title: "About — Ripa Mustopa A",
   description:
-    "Software engineer focused on frontend systems and developer experience.",
+    "Software engineer and architect focused on scalable systems, backend architecture, and high-performance web applications.",
 };
 
 const experiences = [
   {
-    period: "2022 — Present",
-    role: "Senior Frontend Engineer",
-    company: "Tech Company",
+    period: "2024 — Present",
+    role: "Senior Software Engineer",
+    company: "Tech Enterprise",
     description:
-      "Leading frontend architecture for core product. Reduced bundle size by 60% through code splitting and lazy loading strategies.",
+      "Leading core backend architecture and distributed systems, scaling applications to handle high concurrency with optimized PostgreSQL and microservices.",
+  },
+  {
+    period: "2022 — 2024",
+    role: "Full-Stack Developer",
+    company: "Digital Product Studio",
+    description:
+      "Engineered high-performance web applications using Next.js, TypeScript, and Go. Implemented robust design systems and optimized CI/CD pipelines.",
   },
   {
     period: "2020 — 2022",
     role: "Software Engineer",
-    company: "Startup Name",
+    company: "Tech Startup",
     description:
-      "Built design system from scratch used across 4 products. Mentored 3 junior engineers.",
-  },
-  {
-    period: "2018 — 2020",
-    role: "Frontend Developer",
-    company: "Agency Name",
-    description:
-      "Delivered 20+ client projects with focus on performance and accessibility.",
+      "Built and maintained RESTful APIs, real-time analytics dashboards, and cloud infrastructure on AWS.",
   },
 ];
 
 const focusAreas = [
-  "Frontend Architecture & Design Systems",
-  "Developer Experience & Tooling",
-  "Performance Optimization",
-  "TypeScript & Static Analysis",
+  "Backend Architecture & Distributed Systems",
+  "Full-Stack Web Engineering (Next.js & React)",
+  "Database Performance & Optimization",
+  "DevOps, Docker & Cloud Infrastructure",
 ];
 
 export default function AboutPage() {
   return (
     <div className="pt-32 pb-24">
-      <div className="container-custom max-w-[900px]">
+      <div className="container-custom">
         <ScrollReveal>
           <div className="mb-16">
             <p className="font-mono text-sm text-accent mb-3">PROFILE</p>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-              About
+              About Me
             </h1>
           </div>
         </ScrollReveal>
 
-        <div className="grid md:grid-cols-[1fr_1.5fr] gap-16">
-          <ParallaxSection offset={30} className="space-y-8">
+        <div className="grid md:grid-cols-[1.2fr_2fr] gap-12 lg:gap-16 items-start">
+          {/* Left Column: Photo & Focus Areas */}
+          <ParallaxSection offset={20} className="space-y-8">
             <ScrollReveal>
-              <div>
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-xl">
+                <Image
+                  src="/images/profile.jpg"
+                  alt="Ripa Mustopa A"
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 400px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <div className="font-bold text-lg">Ripa Mustopa A</div>
+                  <div className="text-xs font-mono text-accent">Software Engineer & Architect</div>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.1}>
+              <div className="p-6 rounded-2xl bg-background-elevated border border-border">
                 <h2 className="text-sm font-mono text-accent mb-4">
                   FOCUS AREAS
                 </h2>
                 <ul className="space-y-3">
                   {focusAreas.map((area) => (
-                    <li key={area} className="text-foreground-muted text-sm">
+                    <li key={area} className="text-foreground-muted text-sm flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                       {area}
                     </li>
                   ))}
@@ -69,54 +90,53 @@ export default function AboutPage() {
               </div>
             </ScrollReveal>
 
-            <ScrollReveal delay={0.1}>
-              <div>
-                <h2 className="text-sm font-mono text-accent mb-4">CONTACT</h2>
+            <ScrollReveal delay={0.2}>
+              <div className="p-6 rounded-2xl bg-background-elevated border border-border">
+                <h2 className="text-sm font-mono text-accent mb-4">CONNECT</h2>
                 <div className="space-y-2 text-sm">
-                  <p className="text-foreground-muted">hello@example.com</p>
+                  <p className="text-foreground-muted">ripamustopa99@gmail.com</p>
                   <p className="text-foreground-muted">
-                    Based in Jakarta, Indonesia
+                    Based in West Java, Indonesia
                   </p>
                 </div>
               </div>
             </ScrollReveal>
           </ParallaxSection>
 
+          {/* Right Column: Bio & Experience */}
           <div className="space-y-12">
             <ScrollReveal>
-              <div className="prose prose-invert">
-                <p className="text-lg text-foreground-muted leading-relaxed">
-                  I am a software engineer with 6+ years of experience building
-                  web applications and design systems. My work sits at the
-                  intersection of engineering and product — I care deeply about
-                  code quality, user experience, and business outcomes.
+              <div className="prose prose-invert space-y-6">
+                <p className="text-xl text-foreground leading-relaxed font-medium">
+                  Hi, I'm Ripa Mustopa A — a software engineer and system architect with a passion for building robust web applications and scalable backend architectures.
                 </p>
                 <p className="text-foreground-muted leading-relaxed">
-                  Currently, I focus on frontend architecture and developer
-                  experience, helping teams ship faster without sacrificing
-                  quality. I believe the best code is the code that never needs
-                  to be written twice.
+                  My work spans across full-stack engineering, distributed systems, and database optimization. I care deeply about clean code architecture, developer experience, and delivering measurable business outcomes.
+                </p>
+                <p className="text-foreground-muted leading-relaxed">
+                  When I'm not writing code or architecting cloud systems, I explore new technologies, write technical notes, and refine high-performance web products.
                 </p>
               </div>
             </ScrollReveal>
 
-            <ScrollReveal>
+            <ScrollReveal delay={0.1}>
               <div>
                 <h2 className="text-sm font-mono text-accent mb-6">
                   EXPERIENCE
                 </h2>
-                <div className="space-y-8">
+                <div className="space-y-8 border-l border-border pl-6 ml-2">
                   {experiences.map((exp) => (
-                    <div key={exp.period} className="group">
+                    <div key={exp.period} className="relative group">
+                      <div className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-background border-2 border-accent" />
                       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-2">
-                        <h3 className="text-foreground font-medium">
+                        <h3 className="text-foreground font-semibold text-lg">
                           {exp.role}
                         </h3>
                         <span className="text-sm text-foreground-subtle font-mono">
                           {exp.period}
                         </span>
                       </div>
-                      <p className="text-sm text-foreground-muted mb-2">
+                      <p className="text-sm text-accent font-mono mb-2">
                         {exp.company}
                       </p>
                       <p className="text-sm text-foreground-muted leading-relaxed">

@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { Mail, FileText, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
+import { trackEvent } from "@/lib/track-client";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -24,16 +25,13 @@ export default function Footer() {
               {siteConfig.tagline}
             </p>
             <div className="pt-2">
-              <a
-                href={siteConfig.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200"
+              <Link
+                href="/login"
+                className="text-xs font-mono text-foreground-muted hover:text-foreground transition-colors inline-flex items-center gap-1.5"
               >
-                <FileText size={14} />
-                <span>Download Resume</span>
-                <ArrowUpRight size={12} className="text-foreground-muted" />
-              </a>
+                <span>Admin Access</span>
+                <ArrowUpRight size={12} />
+              </Link>
             </div>
           </div>
 
@@ -72,6 +70,7 @@ export default function Footer() {
                 href={siteConfig.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("contact_click", "GitHub")}
                 className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
                 aria-label="GitHub"
               >
@@ -93,6 +92,7 @@ export default function Footer() {
                 href={siteConfig.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("contact_click", "LinkedIn")}
                 className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
                 aria-label="LinkedIn"
               >
@@ -125,6 +125,7 @@ export default function Footer() {
               {/* Email */}
               <a
                 href={`mailto:${siteConfig.social.email}`}
+                onClick={() => trackEvent("contact_click", "Email")}
                 className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
                 aria-label="Email"
               >

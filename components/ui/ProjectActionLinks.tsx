@@ -2,6 +2,7 @@
 "use client";
 
 import { ExternalLink } from "lucide-react";
+import { trackEvent } from "@/lib/track-client";
 
 interface ProjectActionLinksProps {
   slug: string;
@@ -11,7 +12,7 @@ interface ProjectActionLinksProps {
   };
 }
 
-export default function ProjectActionLinks({ links }: ProjectActionLinksProps) {
+export default function ProjectActionLinks({ slug, links }: ProjectActionLinksProps) {
   const baseStyles = "inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-md transition-all duration-200 border border-border bg-background hover:border-accent hover:shadow-[0_0_30px_-5px_rgba(148,163,184,0.2)] text-xs";
 
   return (
@@ -21,6 +22,7 @@ export default function ProjectActionLinks({ links }: ProjectActionLinksProps) {
           href={links.live}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackEvent("project_demo_click", slug)}
           className={baseStyles}
         >
           <ExternalLink size={14} className="mr-2" />
@@ -33,6 +35,7 @@ export default function ProjectActionLinks({ links }: ProjectActionLinksProps) {
           href={links.github}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackEvent("project_github_click", slug)}
           className={baseStyles}
         >
           <svg className="w-3.5 h-3.5 fill-current mr-2 inline-block" viewBox="0 0 24 24" aria-hidden="true">
