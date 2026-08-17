@@ -11,6 +11,9 @@ importers:
       '@prisma/client':
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
+      '@tailwindcss/postcss':
+        specifier: ^4.0.0
+        version: 4.3.3
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -29,6 +32,9 @@ importers:
       next:
         specifier: 16.3.0
         version: 16.3.0(@babel/core@7.29.7)(@types/node@20.19.43)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      postcss:
+        specifier: ^8.5.26
+        version: 8.5.26
       prisma:
         specifier: ^5.22.0
         version: 5.22.0
@@ -47,10 +53,10 @@ importers:
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
-    devDependencies:
-      '@tailwindcss/postcss':
+      tailwindcss:
         specifier: ^4.0.0
         version: 4.3.3
+    devDependencies:
       '@tailwindcss/typography':
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@4.3.3)
@@ -69,12 +75,6 @@ importers:
       eslint-config-next:
         specifier: 16.3.0
         version: 16.3.0(@typescript-eslint/parser@8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
-      postcss:
-        specifier: ^8.5.26
-        version: 8.5.26
-      tailwindcss:
-        specifier: ^4.0.0
-        version: 4.3.3
       tsx:
         specifier: ^4.23.12
         version: 4.23.12
