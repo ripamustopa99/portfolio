@@ -10,10 +10,10 @@ export default function AboutSection() {
         <ScrollReveal>
           <div className="mb-16">
             <p className="font-mono text-sm text-accent mb-3 tracking-wide">
-              ABOUT ME
+              TENTANG SAYA
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Engineering with Purpose
+              Rekayasa dengan Tujuan
             </h2>
           </div>
         </ScrollReveal>
@@ -21,7 +21,7 @@ export default function AboutSection() {
         <div className="grid md:grid-cols-[1fr_1.5fr] gap-12 lg:gap-16 items-center">
           {/* Left: Profile Photo Card */}
           <ScrollReveal>
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-background-elevated shadow-xl">
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-none border border-border bg-background-elevated shadow-xl">
               <Image
                 src="/images/profile.jpg"
                 alt="Ripa Mustopa A"
@@ -32,7 +32,7 @@ export default function AboutSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 text-white">
                 <div className="font-bold text-xl">Ripa Mustopa A</div>
-                <div className="text-xs font-mono text-accent">Software Engineer & Architect</div>
+                <div className="text-xs font-mono text-accent">Software Developer & Architect</div>
               </div>
             </div>
           </ScrollReveal>
@@ -42,10 +42,10 @@ export default function AboutSection() {
             <ScrollReveal>
               <div className="prose prose-invert space-y-6">
                 <p className="text-xl text-foreground leading-relaxed font-medium">
-                  Hi, I&apos;m Ripa Mustopa A — a software engineer and system architect with a passion for building robust web applications and scalable backend architectures.
+                  Halo, saya Ripa Mustopa A — seorang software developer dan system architect dengan kecintaan mendalam dalam membangun aplikasi web yang tangguh dan arsitektur backend berskala tinggi.
                 </p>
                 <p className="text-foreground-muted leading-relaxed">
-                  My work spans across full-stack engineering, distributed systems, and database optimization. I care deeply about clean code architecture, developer experience, and delivering measurable business outcomes.
+                  Pekerjaan saya mencakup rekayasa full-stack, sistem terdistribusi, dan optimasi database. Saya sangat peduli pada arsitektur kode yang bersih, pengalaman pengembang (*developer experience*), serta memberikan dampak bisnis yang terukur.
                 </p>
               </div>
             </ScrollReveal>

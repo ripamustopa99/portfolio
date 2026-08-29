@@ -17,12 +17,12 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Your Name — Software Engineer",
+  title: "Ripa Mustopa A — Software Developer",
   description:
-    "Product showcase of software engineering work. Architecture, frontend systems, and developer experience.",
+    "Product showcase of software development work. Architecture, frontend systems, and developer experience.",
   openGraph: {
-    title: "Your Name — Software Engineer",
-    description: "Product showcase of software engineering work.",
+    title: "Ripa Mustopa A — Software Developer",
+    description: "Product showcase of software development work.",
     type: "website",
   },
 };

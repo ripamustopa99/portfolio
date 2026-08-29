@@ -1,6 +1,6 @@
 ---
-title: "E-Commerce API Platform"
-description: "High-performance REST API handling 10K+ RPM for inventory, orders, and payment processing."
+title: "Platform API E-Commerce"
+description: "REST API berkinerja tinggi yang menangani 10K+ RPM untuk inventaris, pesanan, dan pemrosesan pembayaran."
 date: "2024-01-20"
 thumbnail: "/images/project-api.png"
 tags: ["API", "Backend", "E-Commerce"]
@@ -9,31 +9,31 @@ techStack:
     items: ["Node.js", "Express"]
   - category: "Database"
     items: ["PostgreSQL", "Redis"]
-  - category: "Infrastructure"
+  - category: "Infrastruktur"
     items: ["Docker", "AWS ECS"]
 links:
   github: "https://github.com"
 featured: true
 ---
 
-## Overview
+## Ikhtisar
 
-A scalable e-commerce API platform designed to handle high-throughput inventory and order management.
+Platform API e-commerce yang dapat diskala, dirancang untuk menangani manajemen inventaris dan pesanan dengan throughput tinggi.
 
-## Background
+## Latar Belakang
 
-Legacy system was experiencing frequent timeouts during peak sales periods.
+Sistem lama sering mengalami timeout selama periode penjualan puncak (peak sales).
 
-## Problem
+## Masalah
 
-Existing monolith couldn't scale horizontally and had 15-minute deployment windows.
+Monolit yang ada tidak dapat diskala secara horizontal dan memiliki jendela deployment selama 15 menit.
 
-## Solution
+## Solusi
 
-Migrated to service-oriented architecture with database per service pattern.
+Beralih ke arsitektur berorientasi layanan dengan pola database per layanan.
 
-## Lessons Learned
+## Pelajaran yang Dipetik
 
-- Database connection pooling is critical under load
-- Redis caching reduced response times by 70%
-- API versioning strategy prevented breaking changes
+- Koneksi database pooling sangat krusial di bawah beban berat
+- Caching Redis mengurangi waktu respons hingga 70%
+- Strategi versioning API mencegah perubahan yang merusak (*breaking changes*)

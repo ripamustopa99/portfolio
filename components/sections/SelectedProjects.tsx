@@ -14,10 +14,10 @@ export default async function SelectedProjects() {
           <div className="flex items-end justify-between mb-16">
             <div>
               <p className="font-mono text-sm text-accent mb-3">
-                SELECTED WORK
+                KARYA PILIHAN
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                Featured Projects
+                Proyek Unggulan
               </h2>
             </div>
             <GlowButton

@@ -26,7 +26,7 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       }}
     >
       <Link href={`/projects/${project.slug}/`} className="group block">
-        <div className="relative aspect-[16/9] mb-6 overflow-hidden rounded-lg border border-border bg-background-elevated">
+        <div className="relative aspect-[16/9] mb-6 overflow-hidden rounded-none border border-border bg-background-elevated">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/20 z-10" />
           <Image
             src={project.thumbnail}
@@ -35,7 +35,7 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
             className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
           />
           <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div className="bg-background/90 backdrop-blur-sm p-2 rounded-md border border-border">
+            <div className="bg-background/90 backdrop-blur-sm p-2 rounded-none border border-border">
               <ArrowUpRight size={16} className="text-foreground" />
             </div>
           </div>

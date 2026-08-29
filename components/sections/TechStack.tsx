@@ -4,55 +4,79 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 
 export default function TechStack() {
   return (
-    <section className="section-padding border-t border-border/40">
-      <div className="container-custom">
+    <section className="section-padding border-t border-border/40 relative overflow-hidden">
+      {/* Subtle Neon Radial Glow Background */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-accent/[0.04] rounded-none blur-[180px] pointer-events-none" />
+
+      <div className="container-custom relative z-10">
         <ScrollReveal>
           <div className="max-w-2xl mb-16">
-            <p className="font-mono text-sm text-accent mb-3 tracking-wide">
-              EXPERTISE & TOOLING
+            <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent mb-3">
+              // KEAHLIAN & EKOSISTEM
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Tech Stack
+              Tech Stack & Ecosystem
             </h2>
             <p className="text-foreground-muted">
-              Core technologies, frameworks, and tools I use to architect and build robust digital products.
+              Perangkat, framework, dan teknologi modern yang dikurasi untuk performa, skalabilitas, dan rekayasa berstandar tinggi.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {techStackData.map((category, catIndex) => (
-            <ScrollReveal key={category.title} delay={catIndex * 0.1}>
-              <div className="h-full p-8 rounded-2xl bg-background-elevated border border-border hover:border-border-hover transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">
-                    {category.title}
-                  </h3>
-                  <p className="text-sm text-foreground-muted mb-6">
-                    {category.description}
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {category.items.map((item) => (
-                      <div
-                        key={item.name}
-                        className="p-3.5 rounded-xl bg-background border border-border/80 hover:border-accent/40 transition-colors"
-                      >
-                        <div className="font-mono text-sm font-semibold text-foreground mb-1">
-                          {item.name}
-                        </div>
-                        {item.description && (
-                          <div className="text-xs text-foreground-subtle leading-relaxed">
-                            {item.description}
-                          </div>
-                        )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {techStackData.map((category, catIndex) => {
+            const catNumber = `0${catIndex + 1}`;
+            return (
+              <ScrollReveal key={category.title} delay={catIndex * 0.1}>
+                <div className="h-full p-8 rounded-none bg-surface/30 border border-border hover:border-accent/40 transition-all duration-300 flex flex-col justify-between group">
+                  <div>
+                    {/* Category Header */}
+                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/60">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-xs text-accent">
+                          // {catNumber}
+                        </span>
+                        <h3 className="text-xl font-bold text-foreground font-mono">
+                          {category.title}
+                        </h3>
                       </div>
-                    ))}
+                      <span className="w-2 h-2 rounded-none bg-accent/40 group-hover:bg-accent transition-colors" />
+                    </div>
+
+                    <p className="text-sm text-foreground-muted mb-8 leading-relaxed">
+                      {category.description}
+                    </p>
+
+                    {/* Linear / Raycast Style Tech Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {category.items.map((item) => (
+                        <div
+                          key={item.name}
+                          className="p-4 rounded-none bg-background border border-border hover:border-accent hover:bg-surface/50 transition-all duration-200 flex flex-col justify-between group/item"
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className="font-mono text-sm font-bold text-foreground group-hover/item:text-accent transition-colors">
+                                {item.name}
+                              </span>
+                              <span className="text-[10px] font-mono text-foreground-subtle group-hover/item:text-accent">
+                                active
+                              </span>
+                            </div>
+                            {item.description && (
+                              <p className="text-xs text-foreground-muted leading-relaxed">
+                                {item.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </ScrollReveal>
-          ))}
+              </ScrollReveal>
+            );
+          })}
         </div>
       </div>
     </section>

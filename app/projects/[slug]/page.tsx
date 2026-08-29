@@ -82,7 +82,7 @@ export default async function CaseStudyPage({ params }: Props) {
           {/* Project Thumbnail Image Banner */}
           {project.thumbnail && (
             <ScrollReveal delay={0.05}>
-              <div className="relative aspect-[16/9] mb-16 overflow-hidden rounded-xl border border-border bg-background-elevated shadow-xl">
+              <div className="relative aspect-[16/9] mb-16 overflow-hidden rounded-none border border-border bg-background-elevated shadow-xl">
                 <Image
                   src={project.thumbnail}
                   alt={project.title}
@@ -95,7 +95,7 @@ export default async function CaseStudyPage({ params }: Props) {
           )}
 
           <ScrollReveal delay={0.1}>
-            <div className="mb-16 p-6 bg-background-elevated border border-border rounded-lg">
+            <div className="mb-16 p-6 bg-background-elevated border border-border rounded-none">
               <h2 className="text-sm font-mono text-accent mb-4">TECH STACK</h2>
               <div className="space-y-4">
                 {project.techStack.map((stack) => (
@@ -121,7 +121,7 @@ export default async function CaseStudyPage({ params }: Props) {
 
           <ScrollReveal delay={0.2}>
             <div
-              className="prose prose-invert prose-lg max-w-none prose-headings:text-foreground prose-headings:font-sans prose-p:text-foreground-muted prose-a:text-accent hover:prose-a:text-foreground prose-strong:text-foreground prose-code:text-accent prose-code:bg-background-elevated prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-background-elevated prose-pre:border prose-pre:border-border prose-blockquote:border-l-accent prose-blockquote:text-foreground-muted"
+              className="prose prose-invert prose-lg max-w-none prose-headings:text-foreground prose-headings:font-sans prose-p:text-foreground-muted prose-a:text-accent hover:prose-a:text-foreground prose-strong:text-foreground prose-code:text-accent prose-code:bg-background-elevated prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-none prose-code:text-sm prose-pre:bg-background-elevated prose-pre:border prose-pre:border-border prose-blockquote:border-l-accent prose-blockquote:text-foreground-muted"
               dangerouslySetInnerHTML={{ __html: project.content }}
             />
           </ScrollReveal>

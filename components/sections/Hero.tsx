@@ -7,31 +7,25 @@ import ParallaxSection from "@/components/ui/ParallaxSection";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-16 overflow-hidden">
-      {/* Subtle grid background */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(90deg, #94a3b8 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-        }}
-      />
+    <section className="relative min-h-[85vh] flex items-center pt-48 pb-24 overflow-hidden">
+      {/* Subtle Neon Radial Glow Background at bottom-left */}
+      <div className="absolute bottom-0 left-0 w-[600px] h-[400px] bg-accent/[0.08] rounded-none blur-[150px] pointer-events-none" />
 
-      <div className="container-custom relative z-10">
-        <div className="max-w-3xl">
-          <ParallaxSection offset={30}>
+      <div className="container-custom relative z-10 w-full">
+        <div className="max-w-3xl space-y-8 text-left">
+          <ParallaxSection offset={20}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <p className="font-mono text-sm text-accent mb-6 tracking-wide">
-                SOFTWARE ENGINEER
-              </p>
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent">
+                // SOFTWARE DEVELOPER & SYSTEM ARCHITECT
+              </span>
             </motion.div>
           </ParallaxSection>
 
-          <ParallaxSection offset={20}>
+          <ParallaxSection offset={15}>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -40,16 +34,16 @@ export default function Hero() {
                 delay: 0.1,
                 ease: [0.25, 0.1, 0.25, 1],
               }}
-              className="text-5xl md:text-7xl font-bold tracking-tight text-foreground mb-8 leading-[1.1]"
+              className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.08]"
             >
-              Building systems that
-              <span className="block text-foreground-muted">
-                scale with purpose.
+              Membangun sistem
+              <span className="block text-gradient mt-3">
+                berkinerja tinggi.
               </span>
             </motion.h1>
           </ParallaxSection>
 
-          <ParallaxSection offset={15}>
+          <ParallaxSection offset={10}>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -58,10 +52,9 @@ export default function Hero() {
                 delay: 0.2,
                 ease: [0.25, 0.1, 0.25, 1],
               }}
-              className="text-lg text-foreground-muted mb-10 max-w-xl leading-relaxed"
+              className="text-base sm:text-lg text-foreground-muted max-w-2xl leading-relaxed"
             >
-              I design and build software products with focus on architecture,
-              developer experience, and measurable outcomes.
+              Merancang aplikasi web berkinerja tinggi dan arsitektur backend berskala luas dengan kode bersih, teknologi modern, dan dampak nyata.
             </motion.p>
           </ParallaxSection>
 
@@ -73,7 +66,7 @@ export default function Hero() {
               delay: 0.3,
               ease: [0.25, 0.1, 0.25, 1],
             }}
-            className="flex flex-wrap gap-4"
+            className="flex flex-wrap items-center justify-start gap-4 pt-4"
           >
             <GlowButton href="/projects/" variant="primary">
               View Projects
@@ -84,9 +77,6 @@ export default function Hero() {
           </motion.div>
         </div>
       </div>
-
-      {/* Subtle glow accent */}
-      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
     </section>
   );
 }

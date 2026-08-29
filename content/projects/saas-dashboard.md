@@ -1,15 +1,15 @@
 ---
-title: "SaaS Analytics Dashboard"
-description: "Real-time analytics platform for B2B SaaS companies with customizable reporting and team collaboration features."
+title: "Dashboard Analitik SaaS"
+description: "Platform analitik real-time untuk perusahaan SaaS B2B dengan pelaporan yang dapat disesuaikan dan fitur kolaborasi tim."
 date: "2024-03-15"
 thumbnail: "/images/project-dashboard.png"
-tags: ["SaaS", "Dashboard", "Analytics"]
+tags: ["SaaS", "Dashboard", "Analitik"]
 techStack:
   - category: "Frontend"
     items: ["Next.js 14", "TypeScript", "Tailwind CSS"]
-  - category: "State Management"
+  - category: "Manajemen State"
     items: ["Zustand", "TanStack Query"]
-  - category: "Visualization"
+  - category: "Visualisasi"
     items: ["Recharts", "D3.js"]
 links:
   live: "https://example.com"
@@ -17,34 +17,34 @@ links:
 featured: true
 ---
 
-## Overview
+## Ikhtisar
 
-A comprehensive analytics dashboard designed for B2B SaaS companies to track key metrics, visualize data trends, and generate reports.
+Dashboard analitik komprehensif yang dirancang untuk perusahaan SaaS B2B guna melacak metrik utama, memvisualisasikan tren data, dan menghasilkan laporan.
 
-## Background
+## Latar Belakang
 
-The client needed a centralized platform to replace fragmented spreadsheet-based reporting across multiple teams.
+Klien memerlukan platform terpusat untuk menggantikan pelaporan berbasis spreadsheet yang terfragmentasi di berbagai tim.
 
-## Problem
+## Masalah
 
-How might we consolidate data from 12+ sources into a single, actionable dashboard without compromising performance?
+Bagaimana cara mengonsolidasikan data dari 12+ sumber ke dalam satu dashboard yang mudah ditindaklanjuti tanpa mengorbankan performa?
 
-## Goals
+## Tujuan
 
-- Reduce report generation time by 80%
-- Support real-time updates for 50+ concurrent users
-- Maintain sub-100ms interaction response times
+- Mengurangi waktu pembuatan laporan hingga 80%
+- Mendukung pembaruan real-time untuk 50+ pengguna konkuren
+- Menjaga waktu respons interaksi di bawah 100ms
 
-## Solution
+## Solusi
 
-Implemented a modular architecture with lazy-loaded widget system and optimistic UI updates.
+Menerapkan arsitektur modular dengan sistem widget *lazy-loaded* dan pembaruan UI optimis.
 
-## Architecture
+## Arsitektur
 
-The application uses a layered architecture with clear separation between data fetching, state management, and presentation layers.
+Aplikasi ini menggunakan arsitektur berlapis dengan pemisahan yang jelas antara pengambilan data, manajemen state, dan lapisan presentasi.
 
-## Lessons Learned
+## Pelajaran yang Dipetik
 
-- Zustand proved more maintainable than Redux for this scale
-- Server-side rendering significantly improved initial load metrics
-- Chart interactivity requires careful memoization to prevent re-renders
+- Zustand terbukti lebih mudah dikelihara dibandingkan Redux untuk skala ini
+- Server-side rendering secara signifikan meningkatkan metrik muat awal
+- Interaktivitas grafik memerlukan memoisasi yang cermat untuk mencegah render ulang yang tidak perlu

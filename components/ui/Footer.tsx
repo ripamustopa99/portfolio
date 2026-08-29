@@ -29,16 +29,16 @@ export default function Footer() {
                 href="/login"
                 className="text-xs font-mono text-foreground-muted hover:text-foreground transition-colors inline-flex items-center gap-1.5"
               >
-                <span>Admin Access</span>
+                <span>Analytics</span>
                 <ArrowUpRight size={12} />
               </Link>
             </div>
           </div>
 
-          {/* Quick Pagination / Navigation */}
+          {/* Quick Navigation */}
           <div className="md:col-span-3 space-y-4">
             <h3 className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
-              Quick Navigation
+              Navigasi Cepat
             </h3>
             <ul className="space-y-2.5">
               {siteConfig.navLinks.map((link) => (
@@ -59,10 +59,10 @@ export default function Footer() {
           {/* Social Icons & Contact */}
           <div className="md:col-span-4 space-y-4">
             <h3 className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
-              Connect
+              Terhubung
             </h3>
             <p className="text-sm text-foreground-muted">
-              Feel free to reach out for collaborations or just a friendly chat.
+              Jangan ragu untuk menghubungi saya untuk kolaborasi atau sekadar ngobrol santai.
             </p>
             <div className="flex items-center gap-3 pt-1">
               {/* GitHub SVG */}
@@ -71,7 +71,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("contact_click", "GitHub")}
-                className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
+                className="w-9 h-9 rounded-none bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
                 aria-label="GitHub"
               >
                 <svg
@@ -93,7 +93,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("contact_click", "LinkedIn")}
-                className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
+                className="w-9 h-9 rounded-none bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
                 aria-label="LinkedIn"
               >
                 <svg
@@ -110,7 +110,7 @@ export default function Footer() {
                 href={siteConfig.social.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
+                className="w-9 h-9 rounded-none bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
                 aria-label="Twitter"
               >
                 <svg
@@ -126,7 +126,7 @@ export default function Footer() {
               <a
                 href={`mailto:${siteConfig.social.email}`}
                 onClick={() => trackEvent("contact_click", "Email")}
-                className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
+                className="w-9 h-9 rounded-none bg-surface border border-border flex items-center justify-center text-foreground-muted hover:text-foreground hover:border-accent transition-all duration-200"
                 aria-label="Email"
               >
                 <Mail size={18} />
@@ -141,7 +141,7 @@ export default function Footer() {
             © {currentYear} {siteConfig.name}. All rights reserved.
           </div>
           <div className="flex items-center gap-3">
-            <span className="px-2 py-0.5 rounded bg-surface border border-border text-[11px]">
+            <span className="px-2 py-0.5 rounded-none bg-surface border border-border text-[11px]">
               v{siteConfig.version}
             </span>
             <span>•</span>

@@ -1,13 +1,13 @@
 ---
-title: "TypeScript Patterns I Use Daily"
-description: "Practical TypeScript patterns for safer, more maintainable code."
+title: "Pola TypeScript yang Saya Gunakan Setiap Hari"
+description: "Pola TypeScript praktis untuk kode yang lebih aman dan mudah dipelihara."
 date: "2024-01-05"
 tags: ["TypeScript", "DX"]
 ---
 
-## Strict Mode Non-Negotiables
+## Mode Ketat Tanpa Kompromi
 
-`strict: true` in tsconfig.json catches 40% of bugs at compile time.
+`strict: true` di dalam tsconfig.json mendeteksi 40% bug pada saat waktu kompilasi.
 
 ## Discriminated Unions
 

@@ -64,7 +64,7 @@ export default function LoginForm() {
   return (
     <div className="min-h-screen flex items-center justify-center py-16 px-4 bg-background relative overflow-hidden">
       {/* Background ambient glow effect */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/5 rounded-none blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-md relative z-10">
         {/* Back to Home Link */}
@@ -79,10 +79,10 @@ export default function LoginForm() {
         </div>
 
         <ScrollReveal>
-          <div className="bg-surface/50 border border-border rounded-2xl p-8 backdrop-blur-md shadow-2xl relative">
+          <div className="bg-surface/50 border border-border rounded-none p-8 backdrop-blur-md shadow-2xl relative">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mx-auto mb-4 shadow-sm">
+              <div className="w-12 h-12 rounded-none bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mx-auto mb-4 shadow-sm">
                 <Lock size={22} />
               </div>
               <h1 className="text-2xl font-bold text-foreground tracking-tight">Welcome Back</h1>
@@ -93,7 +93,7 @@ export default function LoginForm() {
 
             {status === "success" ? (
               <div className="flex flex-col items-center justify-center py-8 text-center space-y-4 animate-in fade-in zoom-in-95 duration-300">
-                <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center text-accent">
+                <div className="w-14 h-14 rounded-none bg-accent/10 flex items-center justify-center text-accent">
                   <CheckCircle2 size={32} />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">Login Successful!</h3>
@@ -104,7 +104,7 @@ export default function LoginForm() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 {errorMessage && (
-                  <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-start gap-3">
+                  <div className="p-3.5 rounded-none bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-start gap-3">
                     <ShieldAlert size={16} className="shrink-0 mt-0.5" />
                     <span>{errorMessage}</span>
                   </div>
@@ -127,7 +127,7 @@ export default function LoginForm() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="admin@example.com"
-                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-foreground-subtle"
+                      className="w-full pl-10 pr-4 py-3 rounded-none bg-background border border-border text-foreground text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-foreground-subtle"
                     />
                   </div>
                 </div>
@@ -151,7 +151,7 @@ export default function LoginForm() {
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="••••••••"
-                      className="w-full pl-10 pr-11 py-3 rounded-xl bg-background border border-border text-foreground text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-foreground-subtle"
+                      className="w-full pl-10 pr-11 py-3 rounded-none bg-background border border-border text-foreground text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-foreground-subtle"
                     />
                     <button
                       type="button"
@@ -168,7 +168,7 @@ export default function LoginForm() {
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="w-full py-3 rounded-xl bg-accent text-background font-semibold text-sm hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/20 disabled:opacity-70 disabled:cursor-not-allowed mt-2"
+                  className="w-full py-3 rounded-none bg-accent text-background font-semibold text-sm hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-lg shadow-accent/20 disabled:opacity-70 disabled:cursor-not-allowed mt-2"
                 >
                   {status === "submitting" ? (
                     <>

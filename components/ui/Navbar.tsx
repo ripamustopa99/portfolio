@@ -91,7 +91,7 @@ export default function Navbar() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           isScrolled
-            ? "bg-background/85 backdrop-blur-md border-b border-border shadow-sm py-3.5"
+            ? "bg-background/90 backdrop-blur-md border-b border-border shadow-sm py-3.5"
             : "bg-transparent border-transparent py-5"
         )}
       >
@@ -136,7 +136,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("resume_download")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-none bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
               >
                 <FileText size={13} />
                 <span>Resume</span>
@@ -148,7 +148,7 @@ export default function Navbar() {
           {/* Mobile Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-foreground-muted hover:text-foreground hover:bg-surface transition-colors"
+            className="md:hidden p-2 rounded-none text-foreground-muted hover:text-foreground hover:bg-surface transition-colors"
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -156,7 +156,7 @@ export default function Navbar() {
         </div>
       </motion.header>
 
-      {/* Mobile Drawer Menu (Full width, smooth height expansion without opacity fade) */}
+      {/* Mobile Drawer Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <div className="fixed inset-x-0 top-16 z-40 md:hidden">
@@ -166,7 +166,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="absolute inset-0 top-0 h-[100vh] bg-background/60 backdrop-blur-md pointer-events-auto"
+              className="absolute inset-0 top-0 h-[100vh] bg-background/80 backdrop-blur-md pointer-events-auto"
             />
 
             {/* Drawer Content */}
@@ -185,7 +185,7 @@ export default function Navbar() {
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className={cn(
-                        "block py-3 text-base font-medium transition-colors rounded-lg px-3",
+                        "block py-3 text-base font-medium transition-colors rounded-none px-3",
                         pathname === link.href
                           ? "text-foreground bg-surface font-semibold"
                           : "text-foreground-muted hover:text-foreground hover:bg-surface/50",
@@ -207,7 +207,7 @@ export default function Navbar() {
                     trackEvent("resume_download");
                     setMobileMenuOpen(false);
                   }}
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-surface border border-border text-sm font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-none bg-surface border border-border text-sm font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
                 >
                   <FileText size={16} />
                   <span>Download Resume</span>

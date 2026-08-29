@@ -2,10 +2,10 @@
 export const siteConfig = {
   name: "Ripa Mustopa A",
   brand: "ripamustopa99.dev",
-  tagline: "Building robust web applications and digital experiences with modern technologies.",
+  tagline: "Membangun aplikasi web yang tangguh dan pengalaman digital dengan teknologi modern.",
   url: "https://ripamustopa99.dev",
   version: "0.1.0",
-  lastUpdated: "June 2026",
+  lastUpdated: "Juni 2026",
   resumeUrl: "/resume.pdf",
   navLinks: [
     { href: "/", label: "Home" },

@@ -24,7 +24,7 @@ export default function OwnerStatusToggle({ initialIsOwner }: { initialIsOwner: 
   };
 
   return (
-    <div className="bg-surface/30 border border-border rounded-xl p-6 space-y-4">
+    <div className="bg-surface/30 border border-border rounded-none p-6 space-y-4">
       <h3 className="text-xs font-mono uppercase tracking-wider text-foreground-muted flex items-center gap-2">
         {isOwner ? <ShieldCheck size={16} className="text-emerald-400" /> : <ShieldAlert size={16} className="text-amber-400" />}
         <span>Owner Tracking Status</span>
@@ -43,7 +43,7 @@ export default function OwnerStatusToggle({ initialIsOwner }: { initialIsOwner: 
         <button
           onClick={toggleOwner}
           disabled={isLoading}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-none text-xs font-semibold transition-all flex items-center gap-2 ${
             isOwner
               ? "bg-amber-500/10 border border-amber-500/25 text-amber-400 hover:bg-amber-500/20"
               : "bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20"
