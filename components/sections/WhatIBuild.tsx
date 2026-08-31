@@ -1,43 +1,47 @@
 // components/sections/WhatIBuild.tsx
+"use client";
+
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import { Code2, Server, Cpu } from "lucide-react";
-
-const pillars = [
-  {
-    icon: Code2,
-    title: "Aplikasi Web Full-Stack",
-    description: "Produk web ujung-ke-ujung (end-to-end) yang dikembangkan dengan Next.js, React, dan TypeScript, berfokus pada performa kilat, SSR/SSG, serta pengalaman pengguna yang prima.",
-  },
-  {
-    icon: Server,
-    title: "Backend & API Berskala Tinggi",
-    description: "Backend terdistribusi yang dapat diskala, database relasional/NoSQL yang tangguh, serta mikroservis berkonkurensi tinggi yang dirancang untuk latensi rendah dan keandalan.",
-  },
-  {
-    icon: Cpu,
-    title: "DevOps & Arsitektur Sistem",
-    description: "Pipeline CI/CD otomatis, infrastruktur tercontainerisasi dengan Docker, deployment cloud, serta arsitektur kode yang bersih dan mudah dipelihara.",
-  },
-];
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
 
 export default function WhatIBuild() {
+  const { language } = useLanguage();
+  const t = translations[language].whatIBuild;
+
+  const pillars = [
+    {
+      icon: Code2,
+      title: t.p2Title,
+      description: t.p2Desc,
+    },
+    {
+      icon: Server,
+      title: t.p1Title,
+      description: t.p1Desc,
+    },
+    {
+      icon: Cpu,
+      title: t.p3Title,
+      description: t.p3Desc,
+    },
+  ];
+
   return (
     <section className="section-padding min-h-[75vh] flex items-center relative overflow-hidden border-t border-border/40">
       {/* Background ambient glow */}
       <div className="absolute top-1/2 right-10 w-[500px] h-[300px] bg-accent/[0.04] rounded-none blur-[150px] pointer-events-none" />
 
-      <div className="container-custom relative z-10 w-full">
+      <div className="container-custom relative z-10 w-full" key={language}>
         <ScrollReveal>
           <div className="max-w-2xl mb-16">
             <p className="font-mono text-sm text-accent mb-3 tracking-wide">
-              RUANG LINGKUP REKAYASA
+              {t.badge}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Yang Saya Bangun
+              {t.title}
             </h2>
-            <p className="text-foreground-muted">
-              Domain khusus dan fokus arsitektur yang saya hadirkan dalam setiap proyek rekayasa perangkat lunak.
-            </p>
           </div>
         </ScrollReveal>
 

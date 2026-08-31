@@ -1,8 +1,13 @@
 // components/sections/CallToAction.tsx
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import GlowButton from "@/components/ui/GlowButton";
+import { getLang } from "@/lib/get-lang";
+import { translations } from "@/lib/translations";
 
-export default function CallToAction() {
+export default async function CallToAction() {
+  const lang = await getLang();
+  const t = translations[lang as "en" | "id"].contactSection;
+
   return (
     <section className="section-padding min-h-[50vh] flex items-center justify-center relative overflow-hidden border-t border-border/40">
       {/* Background ambient glow */}
@@ -13,17 +18,17 @@ export default function CallToAction() {
         <ScrollReveal>
           <div className="max-w-3xl mx-auto space-y-6">
             <span className="font-mono text-xs uppercase tracking-widest text-accent">
-              LET&apos;S BUILD SOMETHING AMAZING
+              {lang === "en" ? "LET'S BUILD SOMETHING AMAZING" : "MARI BANGUN SESUATU YANG HEBAT"}
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight leading-tight">
-              Have a project in mind or want to collaborate?
+              {t.title}?
             </h2>
             <p className="text-foreground-muted text-base sm:text-lg max-w-xl mx-auto">
-              I&apos;m always open to discussing new engineering challenges, product ideas, or partnership opportunities.
+              {t.desc}
             </p>
             <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
               <GlowButton href="/contact/" variant="primary">
-                Get in Touch
+                {t.sendButton}
               </GlowButton>
             </div>
           </div>

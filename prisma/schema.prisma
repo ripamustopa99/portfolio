@@ -42,11 +42,48 @@ model RateLimit {
 
 model AnalyticsEvent {
    id        String   @id @default(uuid())
-   eventType String   @map("event_type") // page_view, project_view, project_demo_click, project_github_click, resume_download, contact_click
-   target    String?  // project slug or action target
-   visitorId String?  @map("visitor_id") // unique visitor cookie
+   eventType String   @map("event_type")
+   target    String?
+   visitorId String?  @map("visitor_id")
    ipAddress String?  @map("ip_address")
    createdAt DateTime @default(now()) @map("created_at")
 
    @@map("analytics_events")
+}
+
+model Project {
+  id                String   @id @default(uuid())
+  slug              String
+  title             String
+  description       String
+  language          String   @default("en") // "en" or "id"
+  date              DateTime
+  thumbnail         String?
+  animationVideoUrl String?  @map("animation_video_url") // Dribbble-style video preview
+  tags              String[]
+  techStack         String?  @map("tech_stack") // Stored as JSON string
+  links             String?  // Stored as JSON string
+  featured          Boolean  @default(false)
+  content           String   // Markdown / HTML content
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@unique([slug, language])
+  @@map("projects")
+}
+
+model Note {
+  id          String   @id @default(uuid())
+  slug        String
+  title       String
+  description String
+  language    String   @default("en") // "en" or "id"
+  date        DateTime
+  tags        String[]
+  content     String   // Markdown / HTML content
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@unique([slug, language])
+  @@map("notes")
 }

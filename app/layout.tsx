@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AppLayout from "@/components/ui/AppLayout";
+import { LanguageProvider } from "@/lib/LanguageContext";
+import { getLang } from "@/lib/get-lang";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,15 +29,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const lang = (await getLang()) as "en" | "id";
+
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang={lang} className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen flex flex-col">
-        <AppLayout>{children}</AppLayout>
+        <LanguageProvider initialLanguage={lang}>
+          <AppLayout>{children}</AppLayout>
+        </LanguageProvider>
       </body>
     </html>
   );

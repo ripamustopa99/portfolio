@@ -5,6 +5,7 @@ export interface Project {
   description: string;
   date: string;
   thumbnail: string;
+  animationVideoUrl?: string;
   tags: string[];
   techStack: {
     category: string;

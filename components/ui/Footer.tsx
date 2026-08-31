@@ -5,9 +5,14 @@ import Link from "next/link";
 import { Mail, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import { trackEvent } from "@/lib/track-client";
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { language } = useLanguage();
+  const t = translations[language].footer;
+  const navT = translations[language].nav;
 
   return (
     <footer className="border-t border-border bg-background/50 backdrop-blur-sm">
@@ -22,14 +27,16 @@ export default function Footer() {
               {siteConfig.brand}
             </Link>
             <p className="text-foreground-muted text-sm leading-relaxed max-w-sm">
-              {siteConfig.tagline}
+              {language === "en"
+                ? "Building robust web applications and digital experiences with modern technologies."
+                : siteConfig.tagline}
             </p>
             <div className="pt-2">
               <Link
                 href="/login"
                 className="text-xs font-mono text-foreground-muted hover:text-foreground transition-colors inline-flex items-center gap-1.5"
               >
-                <span>Analytics</span>
+                <span>{navT.analytics}</span>
                 <ArrowUpRight size={12} />
               </Link>
             </div>
@@ -38,31 +45,40 @@ export default function Footer() {
           {/* Quick Navigation */}
           <div className="md:col-span-3 space-y-4">
             <h3 className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
-              Navigasi Cepat
+              {t.navTitle}
             </h3>
             <ul className="space-y-2.5">
-              {siteConfig.navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-foreground-muted hover:text-foreground transition-colors inline-flex items-center group"
-                  >
-                    <span className="group-hover:translate-x-1 transition-transform duration-200">
-                      {link.label}
-                    </span>
-                  </Link>
-                </li>
-              ))}
+              {siteConfig.navLinks.map((link) => {
+                let label = link.label;
+                if (link.href === "/") label = navT.home;
+                if (link.href === "/projects/") label = navT.projects;
+                if (link.href === "/notes/") label = navT.notes;
+                if (link.href === "/about/") label = navT.about;
+                if (link.href === "/contact/") label = navT.contact;
+
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-foreground-muted hover:text-foreground transition-colors inline-flex items-center group"
+                    >
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {label}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
           {/* Social Icons & Contact */}
           <div className="md:col-span-4 space-y-4">
             <h3 className="text-xs font-mono uppercase tracking-wider text-foreground font-semibold">
-              Terhubung
+              {t.connectTitle}
             </h3>
             <p className="text-sm text-foreground-muted">
-              Jangan ragu untuk menghubungi saya untuk kolaborasi atau sekadar ngobrol santai.
+              {t.connectDesc}
             </p>
             <div className="flex items-center gap-3 pt-1">
               {/* GitHub SVG */}
@@ -138,14 +154,14 @@ export default function Footer() {
         {/* Bottom Bar: Copyright, Version, Last Updated */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-foreground-muted font-mono">
           <div>
-            © {currentYear} {siteConfig.name}. All rights reserved.
+            © {currentYear} {siteConfig.name}. {t.allRights}
           </div>
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 rounded-none bg-surface border border-border text-[11px]">
               v{siteConfig.version}
             </span>
             <span>•</span>
-            <span>Last updated: {siteConfig.lastUpdated}</span>
+            <span>{t.lastUpdated}: {siteConfig.lastUpdated}</span>
           </div>
         </div>
       </div>

@@ -1,30 +1,38 @@
 // components/sections/TechStack.tsx
+"use client";
+
 import { techStackData } from "@/lib/tech-stack";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
 
 export default function TechStack() {
+  const { language } = useLanguage();
+  const t = translations[language].techStack;
+  const categories = techStackData[language];
+
   return (
     <section className="section-padding border-t border-border/40 relative overflow-hidden">
       {/* Subtle Neon Radial Glow Background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-accent/[0.04] rounded-none blur-[180px] pointer-events-none" />
 
-      <div className="container-custom relative z-10">
+      <div className="container-custom relative z-10" key={language}>
         <ScrollReveal>
           <div className="max-w-2xl mb-16">
             <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent mb-3">
-              // KEAHLIAN & EKOSISTEM
+              // {t.badge}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Tech Stack & Ecosystem
+              {t.title}
             </h2>
             <p className="text-foreground-muted">
-              Perangkat, framework, dan teknologi modern yang dikurasi untuk performa, skalabilitas, dan rekayasa berstandar tinggi.
+              {t.desc}
             </p>
           </div>
         </ScrollReveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {techStackData.map((category, catIndex) => {
+          {categories.map((category, catIndex) => {
             const catNumber = `0${catIndex + 1}`;
             return (
               <ScrollReveal key={category.title} delay={catIndex * 0.1}>

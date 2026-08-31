@@ -1,6 +1,7 @@
 // components/ui/ProjectCard.tsx
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -14,6 +15,8 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -25,15 +28,40 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         ease: [0.25, 0.1, 0.25, 1],
       }}
     >
-      <Link href={`/projects/${project.slug}/`} className="group block">
+      <Link
+        href={`/projects/${project.slug}/`}
+        className="group block"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className="relative aspect-[16/9] mb-6 overflow-hidden rounded-none border border-border bg-background-elevated">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/20 z-10" />
+
+          {/* Thumbnail Image */}
           <Image
             src={project.thumbnail}
             alt={project.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            className={`object-cover transition-transform duration-500 group-hover:scale-[1.02] ${
+              project.animationVideoUrl && isHovered ? "opacity-0" : "opacity-100"
+            }`}
           />
+
+          {/* Dribbble-style Optional Animation Video Preview on Hover */}
+          {project.animationVideoUrl && (
+            <video
+              src={project.animationVideoUrl}
+              autoPlay={isHovered}
+              loop
+              muted
+              playsInline
+              preload="none"
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                isHovered ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          )}
+
           <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <div className="bg-background/90 backdrop-blur-sm p-2 rounded-none border border-border">
               <ArrowUpRight size={16} className="text-foreground" />

@@ -1,68 +1,107 @@
 // lib/projects.ts
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
+import { prisma } from "@/lib/prisma";
+import { Project } from "@/types";
 import { remark } from "remark";
 import html from "remark-html";
-import { Project } from "@/types";
 
-const projectsDirectory = path.join(process.cwd(), "content/projects");
-
-export async function getAllProjects(): Promise<Project[]> {
+export async function getAllProjects(language: string = "en"): Promise<Project[]> {
   try {
-    if (!fs.existsSync(projectsDirectory)) {
-      return [];
+    const dbProjects = await prisma.project.findMany({
+      where: { language },
+      orderBy: { date: "desc" },
+    });
+
+    if (dbProjects.length === 0 && language !== "en") {
+      return getAllProjects("en");
     }
-    const fileNames = fs.readdirSync(projectsDirectory);
 
-    const projects = await Promise.all(
-      fileNames
-        .filter((name) => name.endsWith(".md") || name.endsWith(".mdx"))
-        .map(async (fileName) => {
-          const slug = fileName.replace(/\.mdx?$/, "");
-          const fullPath = path.join(projectsDirectory, fileName);
-          const fileContents = fs.readFileSync(fullPath, "utf8");
-          const { data, content } = matter(fileContents);
+    return dbProjects.map((p) => {
+      let techStack = [];
+      try {
+        techStack = p.techStack ? JSON.parse(p.techStack) : [];
+      } catch {
+        techStack = [];
+      }
 
-          const processedContent = await remark().use(html).process(content);
-          const contentHtml = processedContent.toString();
+      let links = {};
+      try {
+        links = p.links ? JSON.parse(p.links) : {};
+      } catch {
+        links = {};
+      }
 
-          return {
-            slug,
-            content: contentHtml,
-            ...(data as Omit<Project, "slug" | "content">),
-          } as Project;
-        }),
-    );
-
-    return projects.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
+      return {
+        slug: p.slug,
+        title: p.title,
+        description: p.description,
+        date: p.date.toISOString().split("T")[0],
+        thumbnail: p.thumbnail || "",
+        animationVideoUrl: p.animationVideoUrl || undefined,
+        tags: p.tags,
+        techStack,
+        links,
+        featured: p.featured,
+        content: p.content,
+      } as Project;
+    });
   } catch {
     return [];
   }
 }
 
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
+export async function getProjectBySlug(slug: string, language: string = "en"): Promise<Project | null> {
   try {
-    const fullPath = path.join(projectsDirectory, `${slug}.md`);
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-    const { data, content } = matter(fileContents);
+    let p = await prisma.project.findUnique({
+      where: { slug_language: { slug, language } },
+    });
 
-    const processedContent = await remark().use(html).process(content);
-    const contentHtml = processedContent.toString();
+    if (!p) {
+      p = await prisma.project.findUnique({
+        where: { slug_language: { slug, language: "en" } },
+      });
+    }
+
+    if (!p) return null;
+
+    let techStack = [];
+    try {
+      techStack = p.techStack ? JSON.parse(p.techStack) : [];
+    } catch {
+      techStack = [];
+    }
+
+    let links = {};
+    try {
+      links = p.links ? JSON.parse(p.links) : {};
+    } catch {
+      links = {};
+    }
+
+    let processedHtml = p.content;
+    if (!p.content.includes("<p>") && !p.content.includes("<h2>")) {
+      const processed = await remark().use(html).process(p.content);
+      processedHtml = processed.toString();
+    }
 
     return {
-      slug,
-      content: contentHtml,
-      ...(data as Omit<Project, "slug" | "content">),
+      slug: p.slug,
+      title: p.title,
+      description: p.description,
+      date: p.date.toISOString().split("T")[0],
+      thumbnail: p.thumbnail || "",
+      animationVideoUrl: p.animationVideoUrl || undefined,
+      tags: p.tags,
+      techStack,
+      links,
+      featured: p.featured,
+      content: processedHtml,
     } as Project;
   } catch {
     return null;
   }
 }
 
-export async function getFeaturedProjects(): Promise<Project[]> {
-  const projects = await getAllProjects();
+export async function getFeaturedProjects(language: string = "en"): Promise<Project[]> {
+  const projects = await getAllProjects(language);
   return projects.filter((p) => p.featured).slice(0, 3);
 }

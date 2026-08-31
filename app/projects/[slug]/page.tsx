@@ -9,13 +9,15 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 import Tag from "@/components/ui/Tag";
 import ProjectActionLinks from "@/components/ui/ProjectActionLinks";
 import ProjectViewTracker from "@/components/analytics/ProjectViewTracker";
+import { getLang } from "@/lib/get-lang";
+import { translations } from "@/lib/translations";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  const projects = await getAllProjects();
+  const projects = await getAllProjects("en");
   if (projects.length === 0) {
     return [{ slug: "sample-project" }];
   }
@@ -26,7 +28,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const lang = await getLang();
+  const project = await getProjectBySlug(slug, lang);
   if (!project) return { title: "Not Found" };
 
   return {
@@ -37,7 +40,9 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const lang = await getLang();
+  const t = translations[lang as "en" | "id"].projectsPage;
+  const project = await getProjectBySlug(slug, lang);
 
   if (!project) {
     notFound();
@@ -54,7 +59,7 @@ export default async function CaseStudyPage({ params }: Props) {
               className="inline-flex items-center text-sm text-foreground-muted hover:text-foreground mb-12 transition-colors"
             >
               <ArrowLeft size={16} className="mr-2" />
-              Back to Projects
+              {t.backToProjects}
             </Link>
 
             <header className="mb-12">
@@ -68,7 +73,7 @@ export default async function CaseStudyPage({ params }: Props) {
                 {project.title}
               </h1>
 
-              <p className="text-xl text-foreground-muted mb-8 leading-relaxed">
+              <p className="text-sm text-foreground-muted mb-8 leading-relaxed">
                 {project.description}
               </p>
 
@@ -79,8 +84,21 @@ export default async function CaseStudyPage({ params }: Props) {
             </header>
           </ScrollReveal>
 
-          {/* Project Thumbnail Image Banner */}
-          {project.thumbnail && (
+          {/* Project Thumbnail / Animation Video Banner */}
+          {project.animationVideoUrl ? (
+            <ScrollReveal delay={0.05}>
+              <div className="relative aspect-[16/9] mb-16 overflow-hidden rounded-none border border-border bg-background-elevated shadow-xl">
+                <video
+                  src={project.animationVideoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </ScrollReveal>
+          ) : project.thumbnail ? (
             <ScrollReveal delay={0.05}>
               <div className="relative aspect-[16/9] mb-16 overflow-hidden rounded-none border border-border bg-background-elevated shadow-xl">
                 <Image
@@ -92,11 +110,11 @@ export default async function CaseStudyPage({ params }: Props) {
                 />
               </div>
             </ScrollReveal>
-          )}
+          ) : null}
 
           <ScrollReveal delay={0.1}>
             <div className="mb-16 p-6 bg-background-elevated border border-border rounded-none">
-              <h2 className="text-sm font-mono text-accent mb-4">TECH STACK</h2>
+              <h2 className="text-sm font-mono text-accent mb-4">{t.techStack}</h2>
               <div className="space-y-4">
                 {project.techStack.map((stack) => (
                   <div
@@ -121,7 +139,7 @@ export default async function CaseStudyPage({ params }: Props) {
 
           <ScrollReveal delay={0.2}>
             <div
-              className="prose prose-invert prose-lg max-w-none prose-headings:text-foreground prose-headings:font-sans prose-p:text-foreground-muted prose-a:text-accent hover:prose-a:text-foreground prose-strong:text-foreground prose-code:text-accent prose-code:bg-background-elevated prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-none prose-code:text-sm prose-pre:bg-background-elevated prose-pre:border prose-pre:border-border prose-blockquote:border-l-accent prose-blockquote:text-foreground-muted"
+              className="prose prose-invert prose-sm max-w-none prose-headings:text-foreground prose-headings:font-sans prose-p:text-foreground-muted prose-a:text-accent hover:prose-a:text-foreground prose-strong:text-foreground prose-code:text-accent prose-code:bg-background-elevated prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-none prose-code:text-sm prose-pre:bg-background-elevated prose-pre:border prose-pre:border-border prose-blockquote:border-l-accent prose-blockquote:text-foreground-muted"
               dangerouslySetInnerHTML={{ __html: project.content }}
             />
           </ScrollReveal>

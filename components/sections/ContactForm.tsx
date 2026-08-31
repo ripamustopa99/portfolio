@@ -5,8 +5,13 @@ import { useState } from "react";
 import { Mail, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
 
 export default function ContactForm() {
+  const { language } = useLanguage();
+  const t = translations[language].contactSection;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,9 +29,8 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Anti-spam honeypot check
     if (formData.botcheck) {
-      setStatus("success"); // Silently pass for bots
+      setStatus("success");
       return;
     }
 
@@ -45,7 +49,7 @@ export default function ContactForm() {
           name: formData.name,
           email: formData.email,
           message: formData.message,
-          subject: `Pesan baru dari ${formData.name} via Portofolio`,
+          subject: `New message from ${formData.name} via Portfolio`,
         }),
       });
 
@@ -56,25 +60,25 @@ export default function ContactForm() {
         setFormData({ name: "", email: "", message: "", botcheck: "" });
       } else {
         setStatus("error");
-        setErrorMessage(result.message || "Terjadi kesalahan. Silakan coba lagi.");
+        setErrorMessage(result.message || "An error occurred. Please try again.");
       }
     } catch {
       setStatus("error");
-      setErrorMessage("Kesalahan jaringan. Periksa koneksi Anda dan coba lagi.");
+      setErrorMessage("Network error. Please check your connection and try again.");
     }
   };
 
   return (
-    <div className="pt-32 pb-24 min-h-[85vh] flex items-center">
+    <div className="pt-32 pb-24 min-h-[85vh] flex items-center" key={language}>
       <div className="container-custom max-w-[1100px]">
         <ScrollReveal>
           <div className="mb-12">
-            <p className="font-mono text-sm text-accent mb-3 tracking-wide">HUBUNGI SAYA</p>
+            <p className="font-mono text-sm text-accent mb-3 tracking-wide">{t.badge}</p>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Mari Bekerja Sama
+              {t.title}
             </h1>
             <p className="text-foreground-muted max-w-xl text-base leading-relaxed">
-              Saya saat ini terbuka untuk peluang baru dan proyek menarik. Punya pertanyaan atau ingin berkolaborasi? Jangan ragu untuk menghubungi saya.
+              {t.desc}
             </p>
           </div>
         </ScrollReveal>
@@ -87,10 +91,10 @@ export default function ContactForm() {
               <div className="bg-surface/40 border border-border rounded-none p-6 sm:p-8 backdrop-blur-sm space-y-6 shadow-sm">
                 <div>
                   <h3 className="text-sm font-mono uppercase tracking-wider text-foreground font-semibold mb-2">
-                    Kontak Langsung
+                    {language === "en" ? "Direct Contact" : "Kontak Langsung"}
                   </h3>
                   <p className="text-sm text-foreground-muted">
-                    Lebih suka mengirim email langsung? Hubungi saya di:
+                    {language === "en" ? "Prefer sending a direct email? Reach me at:" : "Lebih suka mengirim email langsung? Hubungi saya di:"}
                   </p>
                   <a
                     href={`mailto:${siteConfig.social.email}`}
@@ -103,7 +107,7 @@ export default function ContactForm() {
 
                 <div className="pt-6 border-t border-border">
                   <h3 className="text-sm font-mono uppercase tracking-wider text-foreground font-semibold mb-4">
-                    Profil Sosial
+                    {language === "en" ? "Social Profiles" : "Profil Sosial"}
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     {/* GitHub */}
@@ -146,20 +150,19 @@ export default function ContactForm() {
                     <div className="w-14 h-14 rounded-none bg-accent/10 flex items-center justify-center text-accent">
                       <CheckCircle2 size={32} />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground">Pesan Berhasil Terkirim!</h3>
+                    <h3 className="text-xl font-bold text-foreground">{t.successTitle}</h3>
                     <p className="text-sm text-foreground-muted max-w-md leading-relaxed">
-                      Terima kasih telah menghubungi. Saya telah menerima pesan Anda dan akan segera membalasnya.
+                      {t.successDesc}
                     </p>
                     <button
                       onClick={() => setStatus("idle")}
                       className="mt-4 px-6 py-2.5 rounded-none bg-surface border border-border text-xs font-medium text-foreground hover:border-accent transition-colors"
                     >
-                      Kirim Pesan Lain
+                      {t.sendAnother}
                     </button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* Honeypot Spam Protection */}
                     <input
                       type="checkbox"
                       name="botcheck"
@@ -172,7 +175,7 @@ export default function ContactForm() {
 
                     <div className="space-y-1.5">
                       <label htmlFor="name" className="block text-xs font-mono uppercase tracking-wider text-foreground-muted">
-                        Nama Anda <span className="text-accent">*</span>
+                        {t.nameLabel} <span className="text-accent">*</span>
                       </label>
                       <input
                         type="text"
@@ -181,14 +184,14 @@ export default function ContactForm() {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Nama Lengkap"
+                        placeholder={language === "en" ? "Full Name" : "Nama Lengkap"}
                         className="w-full px-4 py-3 rounded-none bg-background border border-border text-foreground text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-foreground-subtle"
                       />
                     </div>
 
                     <div className="space-y-1.5">
                       <label htmlFor="email" className="block text-xs font-mono uppercase tracking-wider text-foreground-muted">
-                        Email Anda <span className="text-accent">*</span>
+                        {t.emailLabel} <span className="text-accent">*</span>
                       </label>
                       <input
                         type="email"
@@ -204,7 +207,7 @@ export default function ContactForm() {
 
                     <div className="space-y-1.5">
                       <label htmlFor="message" className="block text-xs font-mono uppercase tracking-wider text-foreground-muted">
-                        Pesan Anda <span className="text-accent">*</span>
+                        {t.messageLabel} <span className="text-accent">*</span>
                       </label>
                       <textarea
                         id="message"
@@ -213,7 +216,7 @@ export default function ContactForm() {
                         rows={4}
                         value={formData.message}
                         onChange={handleChange}
-                        placeholder="Halo, saya ingin mendiskusikan sebuah proyek..."
+                        placeholder={language === "en" ? "Hello, I'd like to discuss a project..." : "Halo, saya ingin mendiskusikan sebuah proyek..."}
                         className="w-full px-4 py-3 rounded-none bg-background border border-border text-foreground text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-foreground-subtle resize-none"
                       />
                     </div>
@@ -233,12 +236,12 @@ export default function ContactForm() {
                       {status === "submitting" ? (
                         <>
                           <Loader2 size={16} className="animate-spin" />
-                          <span>Mengirim Pesan...</span>
+                          <span>{t.sending}</span>
                         </>
                       ) : (
                         <>
                           <Send size={16} />
-                          <span>Kirim Pesan</span>
+                          <span>{t.sendButton}</span>
                         </>
                       )}
                     </button>

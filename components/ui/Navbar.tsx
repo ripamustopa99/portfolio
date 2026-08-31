@@ -5,18 +5,12 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Menu, X, FileText, ArrowUpRight } from "lucide-react";
+import { Menu, X, FileText, ArrowUpRight, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/site-config";
 import { trackEvent } from "@/lib/track-client";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/projects/", label: "Projects" },
-  { href: "/notes/", label: "Notes" },
-  { href: "/about/", label: "About" },
-  { href: "/contact/", label: "Contact" },
-];
+import { useLanguage } from "@/lib/LanguageContext";
+import { translations } from "@/lib/translations";
 
 const headerVariants: Variants = {
   visible: {
@@ -39,6 +33,17 @@ const headerVariants: Variants = {
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { language, setLanguage } = useLanguage();
+  const t = translations[language].nav;
+
+  const navLinks = [
+    { href: "/", label: t.home },
+    { href: "/projects/", label: t.projects },
+    { href: "/notes/", label: t.notes },
+    { href: "/about/", label: t.about },
+    { href: "/contact/", label: t.contact },
+  ];
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -49,10 +54,8 @@ export default function Navbar() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Scrolled state for glassmorphism and height adjustment
       setIsScrolled(currentScrollY > 20);
 
-      // Hide navbar on scroll down, show on scroll up
       if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
         setIsVisible(false);
         setMobileMenuOpen(false);
@@ -67,7 +70,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -82,6 +84,11 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [mobileMenuOpen]);
+
+  const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value as "en" | "id";
+    setLanguage(newLang);
+  };
 
   return (
     <>
@@ -103,7 +110,7 @@ export default function Navbar() {
             {siteConfig.brand}
           </Link>
 
-          {/* Desktop Navigation & Resume Button */}
+          {/* Desktop Navigation, Language Switcher & Resume Button */}
           <div className="hidden md:flex items-center gap-8">
             <ul className="flex items-center gap-8">
               {navLinks.map((link) => (
@@ -130,7 +137,23 @@ export default function Navbar() {
               ))}
             </ul>
 
-            <div className="pl-4 border-l border-border">
+            <div className="pl-4 border-l border-border flex items-center gap-3">
+              {/* Language Selector (Select Dropdown) on the Left of Resume */}
+              <div className="relative inline-flex items-center">
+                <Globe size={13} className="absolute left-2.5 text-accent pointer-events-none" />
+                <select
+                  value={language}
+                  onChange={handleLangChange}
+                  aria-label="Select Language"
+                  className="pl-7 pr-7 py-1.5 rounded-none bg-surface border border-border text-xs font-mono font-medium text-foreground hover:border-accent focus:border-accent focus:outline-none transition-all duration-200 shadow-sm cursor-pointer appearance-none uppercase"
+                >
+                  <option value="en" className="bg-background text-foreground font-mono">EN</option>
+                  <option value="id" className="bg-background text-foreground font-mono">ID</option>
+                </select>
+                <div className="absolute right-2.5 pointer-events-none text-foreground-muted text-[10px]">▼</div>
+              </div>
+
+              {/* Resume Button */}
               <a
                 href={siteConfig.resumeUrl}
                 target="_blank"
@@ -139,7 +162,7 @@ export default function Navbar() {
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-none bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
               >
                 <FileText size={13} />
-                <span>Resume</span>
+                <span>{t.resume}</span>
                 <ArrowUpRight size={11} className="text-foreground-muted" />
               </a>
             </div>
@@ -160,7 +183,6 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <div className="fixed inset-x-0 top-16 z-40 md:hidden">
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -169,7 +191,6 @@ export default function Navbar() {
               className="absolute inset-0 top-0 h-[100vh] bg-background/80 backdrop-blur-md pointer-events-auto"
             />
 
-            {/* Drawer Content */}
             <motion.div
               ref={menuRef}
               initial={{ height: 0 }}
@@ -197,8 +218,25 @@ export default function Navbar() {
                 ))}
               </ul>
 
-              {/* Mobile Resume Button */}
-              <div className="pt-6">
+              {/* Mobile Language Selector & Resume */}
+              <div className="pt-6 flex items-center gap-3">
+                <div className="relative inline-flex items-center flex-1">
+                  <Globe size={14} className="absolute left-3 text-accent pointer-events-none" />
+                  <select
+                    value={language}
+                    onChange={(e) => {
+                      handleLangChange(e);
+                      setMobileMenuOpen(false);
+                    }}
+                    aria-label="Select Language"
+                    className="w-full pl-8 pr-8 py-3 rounded-none bg-surface border border-border text-xs font-mono font-medium text-foreground hover:border-accent focus:border-accent focus:outline-none transition-all duration-200 shadow-sm cursor-pointer appearance-none uppercase"
+                  >
+                    <option value="en" className="bg-background text-foreground font-mono">English (EN)</option>
+                    <option value="id" className="bg-background text-foreground font-mono">Indonesia (ID)</option>
+                  </select>
+                  <div className="absolute right-3 pointer-events-none text-foreground-muted text-[10px]">▼</div>
+                </div>
+
                 <a
                   href={siteConfig.resumeUrl}
                   target="_blank"
@@ -207,11 +245,11 @@ export default function Navbar() {
                     trackEvent("resume_download");
                     setMobileMenuOpen(false);
                   }}
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-none bg-surface border border-border text-sm font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-none bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
                 >
-                  <FileText size={16} />
-                  <span>Download Resume</span>
-                  <ArrowUpRight size={14} className="text-foreground-muted" />
+                  <FileText size={15} />
+                  <span>{t.resume}</span>
+                  <ArrowUpRight size={13} className="text-foreground-muted" />
                 </a>
               </div>
             </motion.div>

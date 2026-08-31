@@ -6,13 +6,15 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 import Tag from "@/components/ui/Tag";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { getLang } from "@/lib/get-lang";
+import { translations } from "@/lib/translations";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  const notes = await getAllNotes();
+  const notes = await getAllNotes("en");
   if (notes.length === 0) {
     return [{ slug: "sample-note" }];
   }
@@ -23,7 +25,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const note = await getNoteBySlug(slug);
+  const lang = await getLang();
+  const note = await getNoteBySlug(slug, lang);
   if (!note) return { title: "Not Found" };
 
   return {
@@ -34,7 +37,9 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function NotePage({ params }: Props) {
   const { slug } = await params;
-  const note = await getNoteBySlug(slug);
+  const lang = await getLang();
+  const t = translations[lang as "en" | "id"].notesPage;
+  const note = await getNoteBySlug(slug, lang);
 
   if (!note) {
     notFound();
@@ -49,7 +54,7 @@ export default async function NotePage({ params }: Props) {
             className="inline-flex items-center text-sm text-foreground-muted hover:text-foreground mb-12 transition-colors"
           >
             <ArrowLeft size={16} className="mr-2" />
-            Back to Notes
+            {t.backToNotes}
           </Link>
 
           <header className="mb-12">
@@ -71,7 +76,7 @@ export default async function NotePage({ params }: Props) {
 
         <ScrollReveal delay={0.1}>
           <div
-            className="prose prose-invert prose-lg max-w-none prose-headings:text-foreground prose-headings:font-sans prose-p:text-foreground-muted prose-a:text-accent hover:prose-a:text-foreground prose-strong:text-foreground prose-code:text-accent prose-code:bg-background-elevated prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-background-elevated prose-pre:border prose-pre:border-border prose-blockquote:border-l-accent prose-blockquote:text-foreground-muted"
+            className="prose prose-invert prose-sm max-w-none prose-headings:text-foreground prose-headings:font-sans prose-p:text-foreground-muted prose-a:text-accent hover:prose-a:text-foreground prose-strong:text-foreground prose-code:text-accent prose-code:bg-background-elevated prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-background-elevated prose-pre:border prose-pre:border-border prose-blockquote:border-l-accent prose-blockquote:text-foreground-muted"
             dangerouslySetInnerHTML={{ __html: note.content }}
           />
         </ScrollReveal>

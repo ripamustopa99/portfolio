@@ -3,9 +3,13 @@ import { getFeaturedProjects } from "@/lib/projects";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import ProjectCard from "@/components/ui/ProjectCard";
 import GlowButton from "@/components/ui/GlowButton";
+import { getLang } from "@/lib/get-lang";
+import { translations } from "@/lib/translations";
 
 export default async function SelectedProjects() {
-  const projects = await getFeaturedProjects();
+  const lang = await getLang();
+  const t = translations[lang as "en" | "id"].selectedProjects;
+  const projects = await getFeaturedProjects(lang);
 
   return (
     <section className="section-padding">
@@ -14,10 +18,10 @@ export default async function SelectedProjects() {
           <div className="flex items-end justify-between mb-16">
             <div>
               <p className="font-mono text-sm text-accent mb-3">
-                KARYA PILIHAN
+                {t.badge}
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                Proyek Unggulan
+                {t.title}
               </h2>
             </div>
             <GlowButton
@@ -25,7 +29,7 @@ export default async function SelectedProjects() {
               variant="secondary"
               className="hidden md:inline-flex"
             >
-              View All Projects
+              {t.viewAll}
             </GlowButton>
           </div>
         </ScrollReveal>
@@ -38,7 +42,7 @@ export default async function SelectedProjects() {
 
         <div className="mt-12 md:hidden">
           <GlowButton href="/projects/" variant="secondary" className="w-full">
-            View All Projects
+            {t.viewAll}
           </GlowButton>
         </div>
       </div>

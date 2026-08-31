@@ -2,18 +2,23 @@
 import Image from "next/image";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import GlowButton from "@/components/ui/GlowButton";
+import { getLang } from "@/lib/get-lang";
+import { translations } from "@/lib/translations";
 
-export default function AboutSection() {
+export default async function AboutSection() {
+  const lang = await getLang();
+  const t = translations[lang as "en" | "id"].aboutSection;
+
   return (
     <section className="section-padding border-t border-border/40 relative overflow-hidden">
       <div className="container-custom">
         <ScrollReveal>
           <div className="mb-16">
             <p className="font-mono text-sm text-accent mb-3 tracking-wide">
-              TENTANG SAYA
+              {t.badge}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Rekayasa dengan Tujuan
+              {t.title}
             </h2>
           </div>
         </ScrollReveal>
@@ -42,10 +47,14 @@ export default function AboutSection() {
             <ScrollReveal>
               <div className="prose prose-invert space-y-6">
                 <p className="text-xl text-foreground leading-relaxed font-medium">
-                  Halo, saya Ripa Mustopa A — seorang software developer dan system architect dengan kecintaan mendalam dalam membangun aplikasi web yang tangguh dan arsitektur backend berskala tinggi.
+                  {lang === "en"
+                    ? "Hi, I'm Ripa Mustopa A — a software developer and system architect with a deep passion for building robust web applications and high-scale backend architectures."
+                    : "Halo, saya Ripa Mustopa A — seorang software developer dan system architect dengan kecintaan mendalam dalam membangun aplikasi web yang tangguh dan arsitektur backend berskala tinggi."}
                 </p>
                 <p className="text-foreground-muted leading-relaxed">
-                  Pekerjaan saya mencakup rekayasa full-stack, sistem terdistribusi, dan optimasi database. Saya sangat peduli pada arsitektur kode yang bersih, pengalaman pengembang (*developer experience*), serta memberikan dampak bisnis yang terukur.
+                  {lang === "en"
+                    ? "My work spans full-stack engineering, distributed systems, and database optimization. I care deeply about clean code architecture, developer experience, and delivering measurable business impact."
+                    : "Pekerjaan saya mencakup rekayasa full-stack, sistem terdistribusi, dan optimasi database. Saya sangat peduli pada arsitektur kode yang bersih, pengalaman pengembang (developer experience), serta memberikan dampak bisnis yang terukur."}
                 </p>
               </div>
             </ScrollReveal>
@@ -53,7 +62,7 @@ export default function AboutSection() {
             <ScrollReveal delay={0.1}>
               <div className="pt-2">
                 <GlowButton href="/about/" variant="secondary">
-                  Read Full Bio & Experience
+                  {t.readFullBio}
                 </GlowButton>
               </div>
             </ScrollReveal>
