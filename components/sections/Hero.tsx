@@ -27,7 +27,7 @@ export default function Hero() {
           <ParallaxSection offset={20}>
             <div>
               <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent">
-                // {t.role.toUpperCase()}
+                {`// ${t.role.toUpperCase()}`}
               </span>
             </div>
           </ParallaxSection>

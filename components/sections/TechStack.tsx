@@ -20,7 +20,7 @@ export default function TechStack() {
         <ScrollReveal>
           <div className="max-w-2xl mb-16">
             <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent mb-3">
-              // {t.badge}
+              {`// ${t.badge}`}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               {t.title}
@@ -42,7 +42,7 @@ export default function TechStack() {
                     <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/60">
                       <div className="flex items-center gap-3">
                         <span className="font-mono text-xs text-accent">
-                          // {catNumber}
+                          {`// ${catNumber}`}
                         </span>
                         <h3 className="text-xl font-bold text-foreground font-mono">
                           {category.title}

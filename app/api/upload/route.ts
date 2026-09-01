@@ -30,8 +30,6 @@ export async function POST(request: Request) {
     const timestamp = Math.floor(Date.now() / 1000);
 
     // Generate signature for signed upload
-    const signatureString = `timestamp=${timestamp}&upload_preset=portfolio_preset${apiSecret}`;
-    // Or simpler: signature using just timestamp and api_secret
     const stringToSign = `timestamp=${timestamp}${apiSecret}`;
     const signature = crypto.createHash("sha1").update(stringToSign).digest("hex");
 
@@ -61,7 +59,8 @@ export async function POST(request: Request) {
       format: data.format,
       resourceType: data.resource_type,
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -1,7 +1,7 @@
 // lib/LanguageContext.tsx
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Language = "en" | "id";
@@ -21,17 +21,16 @@ export function LanguageProvider({
   initialLanguage?: Language;
 }) {
   const router = useRouter();
-  const [language, setLanguageState] = useState<Language>(initialLanguage);
-
-  useEffect(() => {
-    const match = document.cookie.match(new RegExp("(^| )portfolio_lang=([^;]+)"));
-    const cookieLang = match ? match[2] : null;
-    if (cookieLang === "en" || cookieLang === "id") {
-      if (cookieLang !== language) {
-        setLanguageState(cookieLang as Language);
+  const [language, setLanguageState] = useState<Language>(() => {
+    if (typeof document !== "undefined") {
+      const match = document.cookie.match(new RegExp("(^| )portfolio_lang=([^;]+)"));
+      const cookieLang = match ? match[2] : null;
+      if (cookieLang === "en" || cookieLang === "id") {
+        return cookieLang as Language;
       }
     }
-  }, []);
+    return initialLanguage;
+  });
 
   const setLanguage = (newLang: Language) => {
     if (newLang === language) return;

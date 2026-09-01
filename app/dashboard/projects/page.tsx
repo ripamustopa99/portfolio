@@ -2,10 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FolderKanban, Plus, Trash2, Edit3, Save, Upload, Video, Image as ImageIcon, X } from "lucide-react";
+import { Plus, Trash2, Edit3, Save, Upload, Video, Image as ImageIcon, X } from "lucide-react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Toast from "@/components/ui/Toast";
-import { ResponsiveTable, Column } from "@/components/ui/ResponsiveTable";
+import { ResponsiveTable } from "@/components/ui/ResponsiveTable";
 
 interface ProjectItem {
   id: string;
@@ -34,10 +34,6 @@ export default function AdminProjectsPage() {
   const [deleteTarget, setDeleteTarget] = useState<{ slug: string; language: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
   const fetchProjects = async () => {
     try {
       const res = await fetch("/api/projects?language=en");
@@ -51,6 +47,11 @@ export default function AdminProjectsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchProjects();
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,8 +76,9 @@ export default function AdminProjectsPage() {
       } else {
         alert("Error: " + data.error);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      alert("Error: " + message);
     }
   };
 
@@ -94,8 +96,9 @@ export default function AdminProjectsPage() {
       } else {
         alert("Error: " + data.error);
       }
-    } catch (err: any) {
-      alert("Error: " + err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      alert("Error: " + message);
     } finally {
       setDeleteTarget(null);
     }
@@ -121,8 +124,9 @@ export default function AdminProjectsPage() {
       } else {
         alert("Upload failed: " + data.error);
       }
-    } catch (err: any) {
-      alert("Upload error: " + err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      alert("Upload error: " + message);
     } finally {
       setUploading(false);
     }

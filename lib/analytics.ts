@@ -94,3 +94,113 @@ export async function getAnalyticsStats() {
     };
   }
 }
+
+export async function getVisitorActivityLogs() {
+  try {
+    const events = await prisma.analyticsEvent.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    const visitorMap = new Map<
+      string,
+      {
+        visitorId: string;
+        ipAddress: string | null;
+        lastActive: Date;
+        events: typeof events;
+      }
+    >();
+
+    for (const ev of events) {
+      const vId = ev.visitorId || "unknown";
+      if (!visitorMap.has(vId)) {
+        visitorMap.set(vId, {
+          visitorId: vId,
+          ipAddress: ev.ipAddress,
+          lastActive: ev.createdAt,
+          events: [],
+        });
+      }
+      visitorMap.get(vId)!.events.push(ev);
+    }
+
+    return Array.from(visitorMap.values());
+  } catch {
+    return [];
+  }
+}
+
+export async function getPaginatedVisitorLogs({
+  page = 1,
+  pageSize = 10,
+  search = "",
+  eventType = "",
+}: {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  eventType?: string;
+}) {
+  try {
+    const where: Record<string, unknown> = {};
+    if (search) {
+      where.OR = [
+        { visitorId: { contains: search, mode: "insensitive" } },
+        { ipAddress: { contains: search, mode: "insensitive" } },
+      ];
+    }
+    if (eventType) {
+      where.eventType = eventType;
+    }
+
+    const events = await prisma.analyticsEvent.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+    });
+
+    const visitorMap = new Map<
+      string,
+      {
+        visitorId: string;
+        ipAddress: string | null;
+        lastActive: Date;
+        events: typeof events;
+      }
+    >();
+
+    for (const ev of events) {
+      const vId = ev.visitorId || "unknown";
+      if (!visitorMap.has(vId)) {
+        visitorMap.set(vId, {
+          visitorId: vId,
+          ipAddress: ev.ipAddress,
+          lastActive: ev.createdAt,
+          events: [],
+        });
+      }
+      visitorMap.get(vId)!.events.push(ev);
+    }
+
+    const allVisitors = Array.from(visitorMap.values());
+    const totalVisitors = allVisitors.length;
+    const totalPages = Math.ceil(totalVisitors / pageSize);
+    const paginatedVisitors = allVisitors.slice((page - 1) * pageSize, page * pageSize);
+
+    return {
+      visitors: paginatedVisitors,
+      totalCount: totalVisitors,
+      totalPages,
+      currentPage: page,
+      pageSize,
+    };
+  } catch {
+    return {
+      visitors: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: 1,
+      pageSize,
+    };
+  }
+}
