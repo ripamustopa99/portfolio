@@ -8,6 +8,9 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const language = searchParams.get("language") || "en";
     const slug = searchParams.get("slug");
+    const page = Number(searchParams.get("page")) || 1;
+    const pageSize = Number(searchParams.get("pageSize")) || 10;
+    const search = searchParams.get("search") || "";
 
     if (slug) {
       const project = await prisma.project.findUnique({
@@ -16,11 +19,63 @@ export async function GET(request: Request) {
       return NextResponse.json(project);
     }
 
-    const projects = await prisma.project.findMany({
-      where: { language },
-      orderBy: { date: "desc" },
+    const where: Record<string, unknown> = { language };
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { slug: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const [totalCount, dbProjects] = await Promise.all([
+      prisma.project.count({ where }),
+      prisma.project.findMany({
+        where,
+        orderBy: { date: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    const projects = dbProjects.map((p) => {
+      let techStack = [];
+      try {
+        techStack = p.techStack ? JSON.parse(p.techStack) : [];
+      } catch {
+        techStack = [];
+      }
+
+      let links = {};
+      try {
+        links = p.links ? JSON.parse(p.links) : {};
+      } catch {
+        links = {};
+      }
+
+      return {
+        slug: p.slug,
+        title: p.title,
+        description: p.description,
+        date: p.date.toISOString().split("T")[0],
+        thumbnail: p.thumbnail || "",
+        animationVideoUrl: p.animationVideoUrl || undefined,
+        tags: p.tags,
+        techStack,
+        links,
+        featured: p.featured,
+        content: p.content,
+      };
     });
-    return NextResponse.json(projects);
+
+    return NextResponse.json({
+      projects,
+      totalCount,
+      totalPages,
+      currentPage: page,
+      pageSize,
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });

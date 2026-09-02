@@ -13,9 +13,6 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-[85vh] flex items-center pt-48 pb-24 overflow-hidden">
-      {/* Subtle Neon Radial Glow Background at bottom-left */}
-      <div className="absolute bottom-0 left-0 w-[600px] h-[400px] bg-accent/[0.08] rounded-none blur-[150px] pointer-events-none" />
-
       <div className="container-custom relative z-10 w-full">
         <motion.div
           key={language}

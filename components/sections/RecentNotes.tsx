@@ -34,11 +34,17 @@ export default async function RecentNotes() {
           </div>
         </ScrollReveal>
 
-        <div className="divide-y divide-border border-t border-border">
-          {notes.map((note) => (
-            <NoteCard key={note.slug} note={note} />
-          ))}
-        </div>
+        {notes.length === 0 ? (
+          <div className="text-center py-16 border border-border rounded-2xl bg-surface/50">
+            <p className="text-foreground-muted text-base">{t.emptyMessage}</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-border border-t border-border">
+            {notes.map((note) => (
+              <NoteCard key={note.slug} note={note} />
+            ))}
+          </div>
+        )}
 
         <div className="mt-8 md:hidden">
           <GlowButton href="/notes/" variant="secondary" className="w-full">

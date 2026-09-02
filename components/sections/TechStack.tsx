@@ -13,9 +13,6 @@ export default function TechStack() {
 
   return (
     <section className="section-padding border-t border-border/40 relative overflow-hidden">
-      {/* Subtle Neon Radial Glow Background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-accent/[0.04] rounded-none blur-[180px] pointer-events-none" />
-
       <div className="container-custom relative z-10" key={language}>
         <ScrollReveal>
           <div className="max-w-2xl mb-16">

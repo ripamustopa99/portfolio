@@ -15,8 +15,11 @@ export default function DashboardTopbar({ userEmail }: DashboardTopbarProps) {
 
   const getBreadcrumbTitle = () => {
     if (!pathname) return "Overview";
+    if (pathname.startsWith("/dashboard/visitors")) return "Visitor Activity";
+    if (pathname.startsWith("/dashboard/media")) return "Media Library";
     if (pathname.startsWith("/dashboard/projects")) return "Manage Projects";
     if (pathname.startsWith("/dashboard/notes")) return "Manage Notes";
+    if (pathname.startsWith("/dashboard/settings")) return "Settings";
     return "Overview";
   };
 

@@ -8,6 +8,9 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const language = searchParams.get("language") || "en";
     const slug = searchParams.get("slug");
+    const page = Number(searchParams.get("page")) || 1;
+    const pageSize = Number(searchParams.get("pageSize")) || 10;
+    const search = searchParams.get("search") || "";
 
     if (slug) {
       const note = await prisma.note.findUnique({
@@ -16,11 +19,42 @@ export async function GET(request: Request) {
       return NextResponse.json(note);
     }
 
-    const notes = await prisma.note.findMany({
-      where: { language },
-      orderBy: { date: "desc" },
+    const where: Record<string, unknown> = { language };
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { slug: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const [totalCount, dbNotes] = await Promise.all([
+      prisma.note.count({ where }),
+      prisma.note.findMany({
+        where,
+        orderBy: { date: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    const notes = dbNotes.map((n) => ({
+      slug: n.slug,
+      title: n.title,
+      description: n.description,
+      date: n.date.toISOString().split("T")[0],
+      tags: n.tags,
+      content: n.content,
+    }));
+
+    return NextResponse.json({
+      notes,
+      totalCount,
+      totalPages,
+      currentPage: page,
+      pageSize,
     });
-    return NextResponse.json(notes);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });

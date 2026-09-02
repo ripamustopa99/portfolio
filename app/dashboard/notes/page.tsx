@@ -6,6 +6,7 @@ import { Plus, Trash2, Edit3, Save, X } from "lucide-react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Toast from "@/components/ui/Toast";
 import { ResponsiveTable } from "@/components/ui/ResponsiveTable";
+import { Pagination } from "@/components/ui/Pagination";
 
 interface NoteItem {
   id: string;
@@ -21,6 +22,9 @@ interface NoteItem {
 export default function AdminNotesPage() {
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [editingNote, setEditingNote] = useState<Partial<NoteItem> | null>(null);
   const [isNew, setIsNew] = useState(false);
 
@@ -28,11 +32,17 @@ export default function AdminNotesPage() {
   const [deleteTarget, setDeleteTarget] = useState<{ slug: string; language: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const fetchNotes = async () => {
+  const fetchNotes = async (page = 1) => {
     try {
-      const res = await fetch("/api/notes?language=en");
+      setLoading(true);
+      const res = await fetch(`/api/notes?language=en&page=${page}&pageSize=10`);
       const data = await res.json();
-      if (Array.isArray(data)) {
+      if (data && Array.isArray(data.notes)) {
+        setNotes(data.notes);
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
+        setTotalCount(data.totalCount);
+      } else if (Array.isArray(data)) {
         setNotes(data);
       }
     } catch (err) {
@@ -44,7 +54,7 @@ export default function AdminNotesPage() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchNotes();
+    fetchNotes(1);
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -66,7 +76,7 @@ export default function AdminNotesPage() {
         setSuccessMessage("Note saved successfully!");
         setEditingNote(null);
         setIsNew(false);
-        fetchNotes();
+        fetchNotes(currentPage);
       } else {
         alert("Error: " + data.error);
       }
@@ -86,7 +96,7 @@ export default function AdminNotesPage() {
       const data = await res.json();
       if (data.success) {
         setSuccessMessage("Note deleted successfully!");
-        fetchNotes();
+        fetchNotes(currentPage);
       } else {
         alert("Error: " + data.error);
       }
@@ -349,6 +359,14 @@ export default function AdminNotesPage() {
             </div>
           </div>
         )}
+      />
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        itemName="notes"
+        onPageChange={(page) => fetchNotes(page)}
       />
     </div>
   );

@@ -2,10 +2,10 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getAnalyticsStats, getVisitorActivityLogs, isOwner } from "@/lib/analytics";
-import OwnerStatusToggle from "@/components/auth/OwnerStatusToggle";
 import OwnerWelcomeModal from "@/components/auth/OwnerWelcomeModal";
 import Link from "next/link";
-import { User, Clock, Terminal, BarChart3, Users, Eye, Download, ExternalLink, Code2, ArrowRight } from "lucide-react";
+import { Terminal, BarChart3, Users, Eye, Download, ExternalLink, Code2, ArrowRight } from "lucide-react";
+import { VisitorActivityCard } from "@/components/ui/VisitorActivityCard";
 
 export const metadata = {
   title: "Admin Dashboard — Portfolio",
@@ -140,7 +140,7 @@ export default async function DashboardPage({
         </div>
 
         {/* Visitor Activity Timeline Preview */}
-        <div className="bg-surface/30 border border-border rounded-none p-4 sm:p-6 space-y-4">
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-mono uppercase tracking-wider text-foreground-muted flex items-center gap-2">
               <Users size={16} className="text-accent" />
@@ -155,87 +155,20 @@ export default async function DashboardPage({
             </Link>
           </div>
           {visitorLogs.length === 0 ? (
-            <p className="text-xs text-foreground-subtle py-8 text-center font-mono">No visitor activity recorded yet.</p>
+            <div className="bg-surface/30 border border-border p-8 text-center text-xs font-mono text-foreground-muted">
+              No visitor activity recorded yet.
+            </div>
           ) : (
-            <div className="space-y-4 pr-2">
-              {visitorLogs.slice(0, 3).map((visitor: { visitorId: string; ipAddress: string | null; lastActive: Date; events: Array<{ id: string; eventType: string; target: string | null; createdAt: Date }> }, idx: number) => (
-                <div key={visitor.visitorId} className="p-4 rounded-none bg-background/50 border border-border space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border text-xs font-mono">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-accent/10 border border-accent/20 text-accent font-bold">
-                        Visitor #{idx + 1}
-                      </span>
-                      <span className="text-foreground-muted text-[11px] truncate max-w-[180px]">
-                        ID: {visitor.visitorId.slice(0, 12)}...
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-foreground-muted text-[11px]">
-                      <span>IP: {visitor.ipAddress || "Unknown"}</span>
-                      <span>Last active: {new Date(visitor.lastActive).toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="text-[11px] font-mono uppercase tracking-wider text-foreground-muted">Actions Timeline:</div>
-                    <div className="space-y-1.5">
-                      {visitor.events.slice(0, 3).map((ev) => (
-                        <div key={ev.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 rounded-none bg-surface/40 border border-border text-xs font-mono">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                            <span className="text-foreground font-medium uppercase text-[11px]">
-                              {ev.eventType.replace(/_/g, " ")}
-                            </span>
-                            {ev.target && (
-                              <span className="text-foreground-muted truncate max-w-[250px]">
-                                → {ev.target}
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-foreground-subtle text-[11px] shrink-0">
-                            {new Date(ev.createdAt).toLocaleTimeString()} ({new Date(ev.createdAt).toLocaleDateString()})
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+            <div className="space-y-3">
+              {visitorLogs.slice(0, 3).map((visitor, idx) => (
+                <VisitorActivityCard
+                  key={visitor.visitorId}
+                  visitor={visitor}
+                  visitorNumber={idx + 1}
+                />
               ))}
             </div>
           )}
-        </div>
-
-        {/* Owner Status Toggle Card */}
-        <div>
-          <OwnerStatusToggle initialIsOwner={ownerStatus} />
-        </div>
-
-        {/* User Info & Security Metadata */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-surface/30 border border-border rounded-none p-4 sm:p-5 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-wider text-foreground-muted flex items-center gap-2">
-              <User size={16} className="text-accent" />
-              <span>Account Information</span>
-            </h3>
-            <div className="space-y-2">
-              <div className="text-xs text-foreground-muted">Email Address</div>
-              <div className="text-sm font-medium text-foreground font-mono bg-background/50 p-3 rounded-none border border-border truncate">
-                {user.email}
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-surface/30 border border-border rounded-none p-4 sm:p-5 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-wider text-foreground-muted flex items-center gap-2">
-              <Clock size={16} className="text-accent" />
-              <span>Security Metadata</span>
-            </h3>
-            <div className="space-y-2">
-              <div className="text-xs text-foreground-muted">Account Created</div>
-              <div className="text-xs font-mono text-foreground bg-background/50 p-3 rounded-none border border-border">
-                {new Date(user.createdAt).toLocaleString()}
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Quick info footer */}

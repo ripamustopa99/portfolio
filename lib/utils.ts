@@ -13,3 +13,14 @@ export function formatDate(date: string): string {
     day: "numeric",
   });
 }
+
+export function getReadingTime(content: string, lang: string = "en"): string {
+  const plainText = content.replace(/<[^>]*>?/gm, "");
+  const words = plainText.trim().split(/\s+/).length;
+  const wpm = 200;
+  const minutes = Math.ceil(words / wpm);
+  if (lang === "id") {
+    return `${minutes} mnt baca`;
+  }
+  return `${minutes} min read`;
+}

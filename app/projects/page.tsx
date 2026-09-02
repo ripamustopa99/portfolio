@@ -33,11 +33,17 @@ export default async function ProjectsPage() {
           </div>
         </ScrollReveal>
 
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          {projects.map((project, index) => (
-            <ProjectCard key={project.slug} project={project} index={index} />
-          ))}
-        </div>
+        {projects.length === 0 ? (
+          <div className="text-center py-20 border border-border rounded-2xl bg-surface/50">
+            <p className="text-foreground-muted text-base">{t.emptyMessage}</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+            {projects.map((project, index) => (
+              <ProjectCard key={project.slug} project={project} index={index} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

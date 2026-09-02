@@ -33,11 +33,17 @@ export default async function NotesPage() {
           </div>
         </ScrollReveal>
 
-        <div className="divide-y divide-border border-t border-border">
-          {notes.map((note) => (
-            <NoteCard key={note.slug} note={note} />
-          ))}
-        </div>
+        {notes.length === 0 ? (
+          <div className="text-center py-20 border border-border rounded-2xl bg-surface/50">
+            <p className="text-foreground-muted text-base">{t.emptyMessage}</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-border border-t border-border">
+            {notes.map((note) => (
+              <NoteCard key={note.slug} note={note} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

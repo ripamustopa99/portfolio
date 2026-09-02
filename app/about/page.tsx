@@ -10,8 +10,8 @@ export async function generateMetadata() {
   return {
     title: lang === "en" ? "About — Ripa Mustopa A" : "Tentang — Ripa Mustopa A",
     description: lang === "en"
-      ? "Software developer and architect focused on scalable systems, backend architecture, and high-performance web applications."
-      : "Software developer dan architect yang berfokus pada sistem berskala, arsitektur backend, dan aplikasi web berkinerja tinggi.",
+      ? "Computer science student and aspiring web developer focused on full-stack web applications and learning modern technologies."
+      : "Mahasiswa ilmu komputer dan calon web developer yang berfokus pada aplikasi web full-stack dan mempelajari teknologi modern.",
   };
 }
 
@@ -22,60 +22,60 @@ export default async function AboutPage() {
 
   const experiences = lang === "en" ? [
     {
-      period: "2024 — Present",
-      role: "Senior Software Developer",
-      company: "Tech Enterprise",
+      period: "2023 — Present",
+      role: "Computer Science Student",
+      company: "University / College",
       description:
-        "Leading core backend architecture and distributed systems, scaling applications to handle high concurrency with optimized PostgreSQL and microservices.",
+        "Studying core computer science concepts, data structures, algorithms, and software engineering principles.",
     },
     {
-      period: "2022 — 2024",
-      role: "Full-Stack Developer",
-      company: "Digital Product Studio",
+      period: "2023 — Present",
+      role: "Full-Stack Web Developer (Side Projects)",
+      company: "Personal & Academic Projects",
       description:
-        "Developed high-performance web applications using Next.js, TypeScript, and Go. Implemented robust design systems and optimized CI/CD pipelines.",
+        "Building full-stack web applications using React, Next.js, TypeScript, Node.js, and Tailwind CSS.",
     },
     {
-      period: "2020 — 2022",
-      role: "Software Developer",
-      company: "Tech Startup",
+      period: "2022 — 2023",
+      role: "Programming Journey & Self-Taught",
+      company: "Self-Learning",
       description:
-        "Built and maintained RESTful APIs, real-time analytics dashboards, and cloud infrastructure on AWS.",
+        "Started learning HTML, CSS, JavaScript fundamentals, and building small interactive web pages.",
     },
   ] : [
     {
-      period: "2024 — Sekarang",
-      role: "Senior Software Developer",
-      company: "Tech Enterprise",
+      period: "2023 — Sekarang",
+      role: "Mahasiswa Ilmu Komputer",
+      company: "Universitas / Perguruan Tinggi",
       description:
-        "Memimpin arsitektur inti backend dan sistem terdistribusi, menskalakan aplikasi untuk menangani konkurensi tinggi dengan PostgreSQL teroptimasi dan mikroservis.",
+        "Mempelajari konsep inti ilmu komputer, struktur data, algoritma, dan prinsip rekayasa perangkat lunak.",
     },
     {
-      period: "2022 — 2024",
-      role: "Full-Stack Developer",
-      company: "Digital Product Studio",
+      period: "2023 — Sekarang",
+      role: "Full-Stack Web Developer (Proyek Sampingan)",
+      company: "Proyek Pribadi & Akademik",
       description:
-        "Mengembangkan aplikasi web berkinerja tinggi menggunakan Next.js, TypeScript, dan Go. Menerapkan sistem desain yang tangguh dan mengoptimalkan pipeline CI/CD.",
+        "Membuat aplikasi web full-stack menggunakan React, Next.js, TypeScript, Node.js, dan Tailwind CSS.",
     },
     {
-      period: "2020 — 2022",
-      role: "Software Developer",
-      company: "Tech Startup",
+      period: "2022 — 2023",
+      role: "Perjalanan Pemrograman & Otodidak",
+      company: "Belajar Mandiri",
       description:
-        "Membangun dan memelihara RESTful API, dashboard analitik real-time, serta infrastruktur cloud di AWS.",
+        "Mulai mempelajari dasar-dasar HTML, CSS, JavaScript, serta membuat halaman web interaktif sederhana.",
     },
   ];
 
   const focusAreas = lang === "en" ? [
-    "Backend Architecture & Distributed Systems",
-    "Full-Stack Web Engineering (Next.js & React)",
-    "Database Performance & Optimization",
-    "DevOps, Docker & Cloud Infrastructure",
+    "Full-Stack Web Engineering (React & Next.js)",
+    "Frontend UI & Responsive Design",
+    "Backend Development & REST APIs",
+    "Computer Science Fundamentals",
   ] : [
-    "Arsitektur Backend & Sistem Terdistribusi",
-    "Rekayasa Web Full-Stack (Next.js & React)",
-    "Performa & Optimasi Database",
-    "DevOps, Docker & Infrastruktur Cloud",
+    "Rekayasa Web Full-Stack (React & Next.js)",
+    "Frontend UI & Desain Responsif",
+    "Pengembangan Backend & REST API",
+    "Dasar-Dasar Ilmu Komputer",
   ];
 
   return (
@@ -106,7 +106,7 @@ export default async function AboutPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
                   <div className="font-bold text-lg">Ripa Mustopa A</div>
-                  <div className="text-xs font-mono text-accent">Software Developer & Architect</div>
+                  <div className="text-xs font-mono text-accent">CS Student & Web Developer</div>
                 </div>
               </div>
             </ScrollReveal>
@@ -146,18 +146,18 @@ export default async function AboutPage() {
               <div className="prose prose-invert space-y-6">
                  <p className="text-xl text-foreground leading-relaxed font-medium">
                    {lang === "en"
-                     ? "Hi, I'm Ripa Mustopa A — a software developer and system architect with a deep passion for building robust web applications and high-scale backend architectures."
-                     : "Halo, saya Ripa Mustopa A — seorang software developer dan system architect dengan kecintaan mendalam dalam membangun aplikasi web yang tangguh dan arsitektur backend berskala tinggi."}
+                     ? "Hi, I'm Ripa Mustopa A — a computer science student and aspiring web developer passionate about learning modern web technologies and building practical applications."
+                     : "Halo, saya Ripa Mustopa A — mahasiswa ilmu komputer dan calon web developer yang antusias mempelajari teknologi web modern dan membangun aplikasi praktis."}
                  </p>
                  <p className="text-foreground-muted leading-relaxed">
                    {lang === "en"
-                     ? "My work spans full-stack engineering, distributed systems, and database optimization. I care deeply about clean code architecture, developer experience, and delivering measurable business impact."
-                     : "Pekerjaan saya mencakup rekayasa full-stack, sistem terdistribusi, dan optimasi database. Saya sangat peduli pada arsitektur kode yang bersih, pengalaman pengembang (developer experience), serta memberikan dampak bisnis yang terukur."}
+                     ? "My journey focuses on full-stack web development, frontend engineering, and backend basics. I enjoy turning ideas into functional web apps and continuously improving my coding skills."
+                     : "Perjalanan saya berfokus pada pengembangan web full-stack, rekayasa frontend, dan dasar-dasar backend. Saya menikmati mengubah ide menjadi aplikasi web fungsional dan terus mengasah kemampuan ngoding."}
                  </p>
                  <p className="text-foreground-muted leading-relaxed">
                    {lang === "en"
-                     ? "When not writing code or designing cloud systems, I explore new technologies, write technical notes, and refine high-performance web products."
-                     : "Saat tidak sedang menulis kode atau merancang sistem cloud, saya mengeksplorasi teknologi baru, menulis catatan teknis, dan menyempurnakan produk web berkinerja tinggi."}
+                     ? "When not in college classes or coding side projects, I enjoy exploring new tech tools, reading technical notes, and sharpening my problem-solving skills."
+                     : "Ketika tidak sedang mengikuti kuliah atau membuat proyek sampingan, saya menikmati eksplorasi alat teknologi baru, membaca catatan teknis, dan mengasah kemampuan memecahkan masalah."}
                  </p>
               </div>
             </ScrollReveal>
@@ -169,7 +169,7 @@ export default async function AboutPage() {
                 </h2>
                 <div className="space-y-8 border-l border-border pl-6 ml-2">
                   {experiences.map((exp) => (
-                    <div key={exp.period} className="relative group">
+                    <div key={`${exp.role}-${exp.period}`} className="relative group">
                       <div className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-none bg-background border-2 border-accent" />
                       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-2">
                         <h3 className="text-foreground font-semibold text-lg">

@@ -14,6 +14,8 @@ import {
   ChevronRight,
   X,
   Users,
+  Settings,
+  Images,
 } from "lucide-react";
 import LogoutButton from "@/components/auth/LogoutButton";
 import { useDashboard } from "./DashboardContext";
@@ -42,12 +44,14 @@ export default function DashboardSidebar({ userEmail }: DashboardSidebarProps) {
   const navItems = [
     { href: "/dashboard", label: "Overview", icon: BarChart3 },
     { href: "/dashboard/visitors", label: "Visitor Activity", icon: Users },
+    { href: "/dashboard/media", label: "Media Library", icon: Images },
     {
       href: "/dashboard/projects",
       label: "Manage Projects",
       icon: FolderKanban,
     },
     { href: "/dashboard/notes", label: "Manage Notes", icon: FileText },
+    { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
 
   return (

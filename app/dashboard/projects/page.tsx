@@ -6,6 +6,7 @@ import { Plus, Trash2, Edit3, Save, Upload, Video, Image as ImageIcon, X } from 
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Toast from "@/components/ui/Toast";
 import { ResponsiveTable } from "@/components/ui/ResponsiveTable";
+import { Pagination } from "@/components/ui/Pagination";
 
 interface ProjectItem {
   id: string;
@@ -26,6 +27,9 @@ interface ProjectItem {
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [editingProject, setEditingProject] = useState<Partial<ProjectItem> | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -34,11 +38,17 @@ export default function AdminProjectsPage() {
   const [deleteTarget, setDeleteTarget] = useState<{ slug: string; language: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const fetchProjects = async () => {
+  const fetchProjects = async (page = 1) => {
     try {
-      const res = await fetch("/api/projects?language=en");
+      setLoading(true);
+      const res = await fetch(`/api/projects?language=en&page=${page}&pageSize=10`);
       const data = await res.json();
-      if (Array.isArray(data)) {
+      if (data && Array.isArray(data.projects)) {
+        setProjects(data.projects);
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
+        setTotalCount(data.totalCount);
+      } else if (Array.isArray(data)) {
         setProjects(data);
       }
     } catch (err) {
@@ -50,7 +60,7 @@ export default function AdminProjectsPage() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchProjects();
+    fetchProjects(1);
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -72,7 +82,7 @@ export default function AdminProjectsPage() {
         setSuccessMessage("Project saved successfully!");
         setEditingProject(null);
         setIsNew(false);
-        fetchProjects();
+        fetchProjects(currentPage);
       } else {
         alert("Error: " + data.error);
       }
@@ -92,7 +102,7 @@ export default function AdminProjectsPage() {
       const data = await res.json();
       if (data.success) {
         setSuccessMessage("Project deleted successfully!");
-        fetchProjects();
+        fetchProjects(currentPage);
       } else {
         alert("Error: " + data.error);
       }
@@ -462,6 +472,14 @@ export default function AdminProjectsPage() {
             </div>
           </div>
         )}
+      />
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        itemName="projects"
+        onPageChange={(page) => fetchProjects(page)}
       />
     </div>
   );

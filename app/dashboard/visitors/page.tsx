@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getPaginatedVisitorLogs } from "@/lib/analytics";
 import Link from "next/link";
-import { Users, Search, Filter, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
+import { Users, Search, Filter, ArrowLeft } from "lucide-react";
+import { Pagination } from "@/components/ui/Pagination";
+import { VisitorActivityCard } from "@/components/ui/VisitorActivityCard";
 
 export const metadata = {
   title: "Visitor Activity — Admin Dashboard",
@@ -33,7 +35,7 @@ export default async function VisitorsPage({
   });
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
@@ -104,103 +106,39 @@ export default async function VisitorsPage({
       </form>
 
       {/* Visitors List */}
-      <div className="bg-surface/30 border border-border rounded-none p-4 sm:p-6 space-y-4">
+      <div className="space-y-4">
         <h3 className="text-xs font-mono uppercase tracking-wider text-foreground-muted flex items-center gap-2">
           <Users size={16} className="text-accent" />
           <span>Visitor Logs & Timelines (Page {currentPage} of {totalPages || 1})</span>
         </h3>
 
         {visitors.length === 0 ? (
-          <p className="text-xs text-foreground-subtle py-12 text-center font-mono">No visitor activity found matching your criteria.</p>
+          <div className="bg-surface/30 border border-border p-8 text-center text-xs font-mono text-foreground-muted">
+            No visitor activity found matching your criteria.
+          </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {visitors.map((visitor, idx) => {
               const visitorNumber = (currentPage - 1) * 10 + idx + 1;
               return (
-                <div key={visitor.visitorId} className="p-4 rounded-none bg-background/50 border border-border space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border text-xs font-mono">
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-accent/10 border border-accent/20 text-accent font-bold">
-                        Visitor #{visitorNumber}
-                      </span>
-                      <span className="text-foreground-muted text-[11px] truncate max-w-[200px]">
-                        ID: {visitor.visitorId}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-foreground-muted text-[11px]">
-                      <span>IP: {visitor.ipAddress || "Unknown"}</span>
-                      <span>Last active: {new Date(visitor.lastActive).toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="text-[11px] font-mono uppercase tracking-wider text-foreground-muted">Actions Timeline:</div>
-                    <div className="space-y-1.5">
-                      {visitor.events.map((ev) => (
-                        <div key={ev.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 rounded-none bg-surface/40 border border-border text-xs font-mono">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                            <span className="text-foreground font-medium uppercase text-[11px]">
-                              {ev.eventType.replace(/_/g, " ")}
-                            </span>
-                            {ev.target && (
-                              <span className="text-foreground-muted truncate max-w-[280px]">
-                                → {ev.target}
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-foreground-subtle text-[11px] shrink-0">
-                            {new Date(ev.createdAt).toLocaleString()}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <VisitorActivityCard
+                  key={visitor.visitorId}
+                  visitor={visitor}
+                  visitorNumber={visitorNumber}
+                />
               );
             })}
           </div>
         )}
 
-        {/* SERVER-SIDE PAGINATION: Only show when totalPages > 1 (i.e. more than 10 items) */}
-        {totalPages > 1 && (
-          <div className="pt-6 border-t border-border flex items-center justify-between text-xs font-mono">
-            <div className="text-foreground-muted">
-              Showing page {currentPage} of {totalPages} ({totalCount} total visitors)
-            </div>
-            <div className="flex items-center gap-2">
-              {currentPage > 1 ? (
-                <Link
-                  href={`/dashboard/visitors?page=${currentPage - 1}${search ? `&search=${encodeURIComponent(search)}` : ""}${eventType ? `&eventType=${eventType}` : ""}`}
-                  className="px-3 py-1.5 rounded-none bg-surface border border-border text-foreground hover:border-accent transition-colors flex items-center gap-1"
-                >
-                  <ChevronLeft size={14} />
-                  <span>Previous</span>
-                </Link>
-              ) : (
-                <span className="px-3 py-1.5 rounded-none bg-surface/50 border border-border/50 text-foreground-muted cursor-not-allowed flex items-center gap-1">
-                  <ChevronLeft size={14} />
-                  <span>Previous</span>
-                </span>
-              )}
-
-              {currentPage < totalPages ? (
-                <Link
-                  href={`/dashboard/visitors?page=${currentPage + 1}${search ? `&search=${encodeURIComponent(search)}` : ""}${eventType ? `&eventType=${eventType}` : ""}`}
-                  className="px-3 py-1.5 rounded-none bg-surface border border-border text-foreground hover:border-accent transition-colors flex items-center gap-1"
-                >
-                  <span>Next</span>
-                  <ChevronRight size={14} />
-                </Link>
-              ) : (
-                <span className="px-3 py-1.5 rounded-none bg-surface/50 border border-border/50 text-foreground-muted cursor-not-allowed flex items-center gap-1">
-                  <span>Next</span>
-                  <ChevronRight size={14} />
-                </span>
-              )}
-            </div>
-          </div>
-        )}
+        {/* SERVER-SIDE PAGINATION */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalCount={totalCount}
+          itemName="visitors"
+          buildHref={(targetPage) => `/dashboard/visitors?page=${targetPage}${search ? `&search=${encodeURIComponent(search)}` : ""}${eventType ? `&eventType=${eventType}` : ""}`}
+        />
       </div>
     </div>
   );

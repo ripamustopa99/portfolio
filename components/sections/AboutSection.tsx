@@ -37,7 +37,7 @@ export default async function AboutSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 text-white">
                 <div className="font-bold text-xl">Ripa Mustopa A</div>
-                <div className="text-xs font-mono text-accent">Software Developer & Architect</div>
+                <div className="text-xs font-mono text-accent">CS Student & Web Developer</div>
               </div>
             </div>
           </ScrollReveal>
@@ -48,13 +48,13 @@ export default async function AboutSection() {
               <div className="prose prose-invert space-y-6">
                 <p className="text-xl text-foreground leading-relaxed font-medium">
                   {lang === "en"
-                    ? "Hi, I'm Ripa Mustopa A — a software developer and system architect with a deep passion for building robust web applications and high-scale backend architectures."
-                    : "Halo, saya Ripa Mustopa A — seorang software developer dan system architect dengan kecintaan mendalam dalam membangun aplikasi web yang tangguh dan arsitektur backend berskala tinggi."}
+                    ? "Hi, I'm Ripa Mustopa A — a computer science student and aspiring web developer passionate about learning modern web technologies and building practical applications."
+                    : "Halo, saya Ripa Mustopa A — mahasiswa ilmu komputer dan calon web developer yang antusias mempelajari teknologi web modern dan membangun aplikasi praktis."}
                 </p>
                 <p className="text-foreground-muted leading-relaxed">
                   {lang === "en"
-                    ? "My work spans full-stack engineering, distributed systems, and database optimization. I care deeply about clean code architecture, developer experience, and delivering measurable business impact."
-                    : "Pekerjaan saya mencakup rekayasa full-stack, sistem terdistribusi, dan optimasi database. Saya sangat peduli pada arsitektur kode yang bersih, pengalaman pengembang (developer experience), serta memberikan dampak bisnis yang terukur."}
+                    ? "My journey focuses on full-stack web development, frontend engineering, and backend basics. I enjoy turning ideas into functional web apps and continuously improving my coding skills."
+                    : "Perjalanan saya berfokus pada pengembangan web full-stack, rekayasa frontend, dan dasar-dasar backend. Saya menikmati mengubah ide menjadi aplikasi web fungsional dan terus mengasah kemampuan ngoding."}
                 </p>
               </div>
             </ScrollReveal>

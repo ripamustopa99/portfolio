@@ -1,6 +1,7 @@
 // app/api/upload/route.ts
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
@@ -51,6 +52,15 @@ export async function POST(request: Request) {
     if (!response.ok) {
       return NextResponse.json({ error: data.error?.message || "Upload failed" }, { status: 400 });
     }
+
+    await prisma.media.create({
+      data: {
+        url: data.secure_url,
+        publicId: data.public_id,
+        resourceType: data.resource_type || "image",
+        filename: file.name,
+      },
+    }).catch(() => {});
 
     return NextResponse.json({
       success: true,
