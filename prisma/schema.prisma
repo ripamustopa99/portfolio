@@ -94,6 +94,7 @@ model Media {
   publicId     String   @map("public_id")
   resourceType String   @map("resource_type") // image, video
   filename     String?
+  category     String   @default("universal") // universal, projects, notes
   createdAt    DateTime @default(now()) @map("created_at")
 
   @@map("media")

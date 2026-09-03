@@ -12,7 +12,7 @@ export default function Hero() {
   const t = translations[language].hero;
 
   return (
-    <section className="relative min-h-[85vh] flex items-center pt-48 pb-24 overflow-hidden">
+    <section className="relative min-h-[85vh] flex items-center pt-32 sm:pt-40 md:pt-48 pb-24 overflow-hidden">
       <div className="container-custom relative z-10 w-full">
         <motion.div
           key={language}
@@ -23,7 +23,7 @@ export default function Hero() {
         >
           <ParallaxSection offset={20}>
             <div>
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent">
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent block py-1">
                 {`// ${t.role.toUpperCase()}`}
               </span>
             </div>

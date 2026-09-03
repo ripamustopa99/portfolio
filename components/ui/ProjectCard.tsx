@@ -1,7 +1,7 @@
 // components/ui/ProjectCard.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -16,6 +16,22 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
 
   return (
     <motion.article
@@ -31,31 +47,37 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       <Link
         href={`/projects/${project.slug}/`}
         className="group block"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <div className="relative aspect-[16/9] mb-6 overflow-hidden rounded-none border border-border bg-background-elevated">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/20 z-10" />
 
           {/* Thumbnail Image */}
-          <Image
-            src={project.thumbnail}
-            alt={project.title}
-            fill
-            className={`object-cover transition-transform duration-500 group-hover:scale-[1.02] ${
-              project.animationVideoUrl && isHovered ? "opacity-0" : "opacity-100"
-            }`}
-          />
+          {project.thumbnail ? (
+            <Image
+              src={project.thumbnail}
+              alt={project.title}
+              fill
+              className={`object-cover transition-transform duration-500 group-hover:scale-[1.02] ${
+                project.animationVideoUrl && isHovered ? "opacity-0" : "opacity-100"
+              }`}
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-surface font-mono text-xs text-foreground-subtle">
+              {project.title}
+            </div>
+          )}
 
           {/* Dribbble-style Optional Animation Video Preview on Hover */}
           {project.animationVideoUrl && (
             <video
+              ref={videoRef}
               src={project.animationVideoUrl}
-              autoPlay={isHovered}
               loop
               muted
               playsInline
-              preload="none"
+              preload="metadata"
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
                 isHovered ? "opacity-100" : "opacity-0"
               }`}

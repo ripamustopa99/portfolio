@@ -105,7 +105,8 @@ export default async function CaseStudyPage({ params }: Props) {
                     <div className="relative aspect-[16/9] mb-16 overflow-hidden rounded-none border border-border bg-background-elevated shadow-xl">
                       <video
                         src={project.animationVideoUrl}
-                        autoPlay
+                        poster={project.thumbnail || undefined}
+                        controls
                         loop
                         muted
                         playsInline

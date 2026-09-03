@@ -5,6 +5,38 @@ import { techStackData } from "@/lib/tech-stack";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import { useLanguage } from "@/lib/LanguageContext";
 import { translations } from "@/lib/translations";
+import { 
+  Code2, 
+  FileCode, 
+  Palette, 
+  Globe, 
+  Server, 
+  Database, 
+  Layers, 
+  GitBranch, 
+  Terminal, 
+  Cloud, 
+  Cpu, 
+  Boxes,
+  LucideIcon
+} from "lucide-react";
+
+const getTechIcon = (name: string): LucideIcon => {
+  const lower = name.toLowerCase();
+  if (lower.includes("react") || lower.includes("next")) return Code2;
+  if (lower.includes("javascript") || lower.includes("typescript")) return FileCode;
+  if (lower.includes("tailwind")) return Palette;
+  if (lower.includes("html") || lower.includes("css")) return Globe;
+  if (lower.includes("node") || lower.includes("express")) return Server;
+  if (lower.includes("postgres") || lower.includes("mysql") || lower.includes("database")) return Database;
+  if (lower.includes("mongo")) return Database;
+  if (lower.includes("prisma")) return Layers;
+  if (lower.includes("git")) return GitBranch;
+  if (lower.includes("vscode") || lower.includes("vs code")) return Terminal;
+  if (lower.includes("postman")) return Cpu;
+  if (lower.includes("vercel")) return Cloud;
+  return Boxes;
+};
 
 export default function TechStack() {
   const { language } = useLanguage();
@@ -28,54 +60,46 @@ export default function TechStack() {
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {categories.map((category, catIndex) => {
             const catNumber = `0${catIndex + 1}`;
             return (
               <ScrollReveal key={category.title} delay={catIndex * 0.1}>
-                <div className="h-full p-8 rounded-none bg-surface/30 border border-border hover:border-accent/40 transition-all duration-300 flex flex-col justify-between group">
+                <div className="h-full p-6 rounded-none bg-surface/20 border border-border hover:border-accent/40 transition-all duration-300 flex flex-col justify-between group">
                   <div>
                     {/* Category Header */}
-                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/60">
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/60">
+                      <div className="flex items-center gap-2">
                         <span className="font-mono text-xs text-accent">
                           {`// ${catNumber}`}
                         </span>
-                        <h3 className="text-xl font-bold text-foreground font-mono">
+                        <h3 className="text-base font-bold text-foreground font-mono">
                           {category.title}
                         </h3>
                       </div>
-                      <span className="w-2 h-2 rounded-none bg-accent/40 group-hover:bg-accent transition-colors" />
                     </div>
 
-                    <p className="text-sm text-foreground-muted mb-8 leading-relaxed">
+                    <p className="text-xs text-foreground-muted mb-6 leading-relaxed">
                       {category.description}
                     </p>
 
-                    {/* Linear / Raycast Style Tech Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {category.items.map((item) => (
-                        <div
-                          key={item.name}
-                          className="p-4 rounded-none bg-background border border-border hover:border-accent hover:bg-surface/50 transition-all duration-200 flex flex-col justify-between group/item"
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-1.5">
-                              <span className="font-mono text-sm font-bold text-foreground group-hover/item:text-accent transition-colors">
-                                {item.name}
-                              </span>
-                              <span className="text-[10px] font-mono text-foreground-subtle group-hover/item:text-accent">
-                                active
-                              </span>
-                            </div>
-                            {item.description && (
-                              <p className="text-xs text-foreground-muted leading-relaxed">
-                                {item.description}
-                              </p>
-                            )}
+                    {/* Compact Icon Badges Grid */}
+                    <div className="flex flex-wrap gap-2.5">
+                      {category.items.map((item) => {
+                        const IconComponent = getTechIcon(item.name);
+                        return (
+                          <div
+                            key={item.name}
+                            className="flex items-center gap-2 px-3 py-2 rounded-none bg-background border border-border hover:border-accent hover:bg-surface/50 transition-all duration-200 group/item cursor-default"
+                            title={item.description}
+                          >
+                            <IconComponent size={14} className="text-accent shrink-0 group-hover/item:scale-110 transition-transform" />
+                            <span className="font-mono text-xs font-medium text-foreground group-hover/item:text-accent transition-colors">
+                              {item.name}
+                            </span>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

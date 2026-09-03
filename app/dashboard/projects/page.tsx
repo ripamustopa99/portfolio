@@ -1,12 +1,14 @@
 // app/dashboard/projects/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { Plus, Trash2, Edit3, Save, Upload, Video, Image as ImageIcon, X } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, Trash2, Edit3, Save, Video, Image as ImageIcon, X, ExternalLink } from "lucide-react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Toast from "@/components/ui/Toast";
 import { ResponsiveTable } from "@/components/ui/ResponsiveTable";
 import { Pagination } from "@/components/ui/Pagination";
+import Link from "next/link";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 interface ProjectItem {
   id: string;
@@ -30,18 +32,18 @@ export default function AdminProjectsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [languageFilter, setLanguageFilter] = useState("en");
   const [editingProject, setEditingProject] = useState<Partial<ProjectItem> | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
   // Modals state
   const [deleteTarget, setDeleteTarget] = useState<{ slug: string; language: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const fetchProjects = async (page = 1) => {
+  const fetchProjects = useCallback(async (page = 1, lang = "en") => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/projects?language=en&page=${page}&pageSize=10`);
+      const res = await fetch(`/api/projects?language=${lang}&page=${page}&pageSize=10`);
       const data = await res.json();
       if (data && Array.isArray(data.projects)) {
         setProjects(data.projects);
@@ -56,17 +58,21 @@ export default function AdminProjectsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchProjects(1);
-  }, []);
+    fetchProjects(1, languageFilter);
+  }, [fetchProjects, languageFilter]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProject?.slug || !editingProject?.title) {
       alert("Slug and Title are required");
+      return;
+    }
+    if (!editingProject?.thumbnail && !editingProject?.animationVideoUrl) {
+      alert("Please provide at least a Thumbnail Image URL or an Animation Video URL.");
       return;
     }
 
@@ -82,7 +88,7 @@ export default function AdminProjectsPage() {
         setSuccessMessage("Project saved successfully!");
         setEditingProject(null);
         setIsNew(false);
-        fetchProjects(currentPage);
+        fetchProjects(currentPage, languageFilter);
       } else {
         alert("Error: " + data.error);
       }
@@ -102,7 +108,7 @@ export default function AdminProjectsPage() {
       const data = await res.json();
       if (data.success) {
         setSuccessMessage("Project deleted successfully!");
-        fetchProjects(currentPage);
+        fetchProjects(currentPage, languageFilter);
       } else {
         alert("Error: " + data.error);
       }
@@ -114,64 +120,58 @@ export default function AdminProjectsPage() {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldName: "thumbnail" | "animationVideoUrl") => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("resourceType", fieldName === "animationVideoUrl" ? "video" : "image");
-
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      if (data.success) {
-        setEditingProject((prev) => ({ ...prev, [fieldName]: data.url }));
-      } else {
-        alert("Upload failed: " + data.error);
-      }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      alert("Upload error: " + message);
-    } finally {
-      setUploading(false);
-    }
-  };
-
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Manage Projects</h1>
-          <p className="text-xs font-mono text-foreground-muted">Create, edit, and publish bilingual projects with Cloudinary media & markdown.</p>
+          <p className="text-xs font-mono text-foreground-muted">Create, edit, and publish bilingual projects with Media Library URLs & markdown.</p>
         </div>
-        <button
-          onClick={() => {
-            setEditingProject({
-              slug: "",
-              title: "",
-              description: "",
-              language: "en",
-              date: new Date().toISOString().split("T")[0],
-              thumbnail: "",
-              animationVideoUrl: "",
-              tags: ["SaaS", "Next.js"],
-              techStack: JSON.stringify([{ category: "Frontend", items: ["Next.js", "TypeScript"] }]),
-              links: JSON.stringify({ live: "https://example.com", github: "https://github.com" }),
-              featured: true,
-              content: "## Overview\n\nWrite project markdown content here...",
-            });
-            setIsNew(true);
-          }}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-none bg-accent text-background text-xs font-mono font-bold hover:opacity-90 transition-opacity w-full sm:w-auto"
-        >
-          <Plus size={16} />
-          <span>New Project</span>
-        </button>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <Link
+            href="/dashboard/media"
+            className="inline-flex sm:hidden items-center justify-center gap-1.5 px-3 py-2.5 bg-surface border border-border text-foreground text-xs font-mono hover:border-accent transition-colors w-full sm:w-auto"
+            title="Open Media Library to copy URLs"
+          >
+            <ImageIcon size={14} className="text-accent" />
+            <span>Media Library</span>
+            <ExternalLink size={12} className="text-foreground-muted" />
+          </Link>
+          <div className="w-36">
+            <CustomSelect
+              value={languageFilter}
+              onChange={setLanguageFilter}
+              options={[
+                { value: "en", label: "English (EN)" },
+                { value: "id", label: "Indonesian (ID)" },
+              ]}
+              uppercase
+            />
+          </div>
+          <button
+            onClick={() => {
+              setEditingProject({
+                slug: "",
+                title: "",
+                description: "",
+                language: languageFilter,
+                date: new Date().toISOString().split("T")[0],
+                thumbnail: "",
+                animationVideoUrl: "",
+                tags: ["SaaS", "Next.js"],
+                techStack: JSON.stringify([{ category: "Frontend", items: ["Next.js", "TypeScript"] }]),
+                links: JSON.stringify({ live: "https://example.com", github: "https://github.com" }),
+                featured: true,
+                content: "## Overview\n\nWrite project markdown content here...",
+              });
+              setIsNew(true);
+            }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-none bg-accent text-background text-xs font-mono font-bold hover:opacity-95 transition-opacity flex-1 sm:flex-initial cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>New Project</span>
+          </button>
+        </div>
       </div>
 
       {/* Success Toast Notification */}
@@ -195,7 +195,7 @@ export default function AdminProjectsPage() {
             </h2>
             <button
               onClick={() => setEditingProject(null)}
-              className="text-foreground-muted hover:text-foreground"
+              className="text-foreground-muted hover:text-foreground cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -217,14 +217,15 @@ export default function AdminProjectsPage() {
 
               <div>
                 <label className="block text-xs font-mono uppercase text-foreground-muted mb-1.5">Language</label>
-                <select
+                <CustomSelect
                   value={editingProject.language || "en"}
-                  onChange={(e) => setEditingProject({ ...editingProject, language: e.target.value })}
-                  className="w-full px-3 py-2 bg-background border border-border text-xs font-mono text-foreground focus:border-accent uppercase"
-                >
-                  <option value="en">English (en)</option>
-                  <option value="id">Indonesian (id)</option>
-                </select>
+                  onChange={(val) => setEditingProject({ ...editingProject, language: val })}
+                  options={[
+                    { value: "en", label: "English (en)" },
+                    { value: "id", label: "Indonesian (id)" },
+                  ]}
+                  uppercase
+                />
               </div>
 
               <div>
@@ -274,12 +275,12 @@ export default function AdminProjectsPage() {
               />
             </div>
 
-            {/* Cloudinary Media Uploads */}
+            {/* Media URL Inputs with Smart Live Preview */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-background/50 border border-border">
-              <div>
-                <label className="block text-xs font-mono uppercase text-foreground-muted mb-2 flex items-center gap-1.5">
+              <div className="space-y-2">
+                <label className="block text-xs font-mono uppercase text-foreground-muted flex items-center gap-1.5">
                   <ImageIcon size={14} className="text-accent" />
-                  <span>Thumbnail Image (Cloudinary)</span>
+                  <span>Thumbnail Image URL</span>
                 </label>
                 <div className="flex items-center gap-3">
                   <input
@@ -289,18 +290,19 @@ export default function AdminProjectsPage() {
                     placeholder="https://res.cloudinary.com/..."
                     className="flex-1 px-3 py-2 bg-background border border-border text-xs font-mono text-foreground focus:border-accent"
                   />
-                  <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-2 bg-surface border border-border text-xs font-mono text-foreground hover:border-accent">
-                    <Upload size={14} />
-                    <span>Upload</span>
-                    <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, "thumbnail")} className="hidden" />
-                  </label>
+                  {editingProject.thumbnail && (
+                    <div className="w-10 h-10 border border-border bg-background shrink-0 overflow-hidden flex items-center justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={editingProject.thumbnail} alt="Preview" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-mono uppercase text-foreground-muted mb-2 flex items-center gap-1.5">
+              <div className="space-y-2">
+                <label className="block text-xs font-mono uppercase text-foreground-muted flex items-center gap-1.5">
                   <Video size={14} className="text-accent" />
-                  <span>Animation Video Preview (Dribbble-style, Optional)</span>
+                  <span>Animation Video URL (Optional)</span>
                 </label>
                 <div className="flex items-center gap-3">
                   <input
@@ -310,11 +312,11 @@ export default function AdminProjectsPage() {
                     placeholder="https://res.cloudinary.com/.../video.mp4"
                     className="flex-1 px-3 py-2 bg-background border border-border text-xs font-mono text-foreground focus:border-accent"
                   />
-                  <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-2 bg-surface border border-border text-xs font-mono text-foreground hover:border-accent">
-                    <Upload size={14} />
-                    <span>Upload</span>
-                    <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, "animationVideoUrl")} className="hidden" />
-                  </label>
+                  {editingProject.animationVideoUrl && (
+                    <div className="w-10 h-10 border border-border bg-background shrink-0 overflow-hidden flex items-center justify-center">
+                      <Video size={16} className="text-accent animate-pulse" />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -343,7 +345,7 @@ export default function AdminProjectsPage() {
                   type="checkbox"
                   checked={Boolean(editingProject.featured)}
                   onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
-                  className="rounded-none bg-background border-border text-accent focus:ring-0"
+                  className="rounded-none bg-background border-border text-accent focus:ring-0 cursor-pointer"
                 />
                 <span>Featured Project</span>
               </label>
@@ -352,17 +354,16 @@ export default function AdminProjectsPage() {
                 <button
                   type="button"
                   onClick={() => setEditingProject(null)}
-                  className="px-4 py-2 bg-surface border border-border text-xs font-mono text-foreground hover:border-accent"
+                  className="px-4 py-2 bg-surface border border-border text-xs font-mono text-foreground hover:border-accent cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={uploading}
-                  className="inline-flex items-center gap-2 px-6 py-2 bg-accent text-background text-xs font-mono font-bold hover:opacity-90 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-6 py-2 bg-accent text-background text-xs font-mono font-bold hover:opacity-95 cursor-pointer"
                 >
                   <Save size={14} />
-                  <span>{uploading ? "Uploading..." : "Save Project"}</span>
+                  <span>Save Project</span>
                 </button>
               </div>
             </div>
@@ -375,7 +376,7 @@ export default function AdminProjectsPage() {
         data={projects}
         loading={loading}
         keyExtractor={(p) => `${p.slug}-${p.language}`}
-        emptyMessage="No projects found. Click 'New Project' to create one."
+        emptyMessage={`No projects found for language (${languageFilter.toUpperCase()}). Click 'New Project' to create one.`}
         columns={[
           {
             header: "Slug / Title",
@@ -414,13 +415,13 @@ export default function AdminProjectsPage() {
                     setEditingProject(p);
                     setIsNew(false);
                   }}
-                  className="p-1.5 bg-surface border border-border text-foreground hover:text-accent hover:border-accent transition-colors"
+                  className="p-1.5 bg-surface border border-border text-foreground hover:text-accent hover:border-accent transition-colors cursor-pointer"
                 >
                   <Edit3 size={14} />
                 </button>
                 <button
                   onClick={() => setDeleteTarget({ slug: p.slug, language: p.language })}
-                  className="p-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                  className="p-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -457,14 +458,14 @@ export default function AdminProjectsPage() {
                   setEditingProject(p);
                   setIsNew(false);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-border text-foreground hover:text-accent hover:border-accent transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-border text-foreground hover:text-accent hover:border-accent transition-colors cursor-pointer"
               >
                 <Edit3 size={14} />
                 <span>Edit</span>
               </button>
               <button
                 onClick={() => setDeleteTarget({ slug: p.slug, language: p.language })}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
               >
                 <Trash2 size={14} />
                 <span>Delete</span>
@@ -479,7 +480,7 @@ export default function AdminProjectsPage() {
         totalPages={totalPages}
         totalCount={totalCount}
         itemName="projects"
-        onPageChange={(page) => fetchProjects(page)}
+        onPageChange={(page) => fetchProjects(page, languageFilter)}
       />
     </div>
   );

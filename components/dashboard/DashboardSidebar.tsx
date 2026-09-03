@@ -1,7 +1,7 @@
 // components/dashboard/DashboardSidebar.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -25,13 +25,14 @@ interface DashboardSidebarProps {
 }
 
 export default function DashboardSidebar({ userEmail }: DashboardSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("dashboard_sidebar_collapsed");
-      return saved === "true";
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("dashboard_sidebar_collapsed");
+    if (saved === "true") {
+      setIsCollapsed(true);
     }
-    return false;
-  });
+  }, []);
   const { isMobileOpen, setIsMobileOpen } = useDashboard();
   const pathname = usePathname();
 

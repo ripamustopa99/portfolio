@@ -47,8 +47,12 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const lastScrollY = useRef(0);
   const menuRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
+  const mobileLangRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,6 +63,8 @@ export default function Navbar() {
       if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
         setIsVisible(false);
         setMobileMenuOpen(false);
+        setLangDropdownOpen(false);
+        setMobileLangOpen(false);
       } else {
         setIsVisible(true);
       }
@@ -75,20 +81,21 @@ export default function Navbar() {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMobileMenuOpen(false);
       }
+      if (langRef.current && !langRef.current.contains(event.target as Node)) {
+        setLangDropdownOpen(false);
+      }
+      if (mobileLangRef.current && !mobileLangRef.current.contains(event.target as Node)) {
+        setMobileLangOpen(false);
+      }
     };
 
-    if (mobileMenuOpen) {
+    if (mobileMenuOpen || langDropdownOpen || mobileLangOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [mobileMenuOpen]);
-
-  const handleLangChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLang = e.target.value as "en" | "id";
-    setLanguage(newLang);
-  };
+  }, [mobileMenuOpen, langDropdownOpen, mobileLangOpen]);
 
   return (
     <>
@@ -138,19 +145,71 @@ export default function Navbar() {
             </ul>
 
             <div className="pl-4 border-l border-border flex items-center gap-3">
-              {/* Language Selector (Select Dropdown) on the Left of Resume */}
-              <div className="relative inline-flex items-center">
-                <Globe size={13} className="absolute left-2.5 text-accent pointer-events-none" />
-                <select
-                  value={language}
-                  onChange={handleLangChange}
+              {/* Custom Language Selector Dropdown on the Left of Resume */}
+              <div className="relative" ref={langRef}>
+                <button
+                  type="button"
+                  onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                  className="inline-flex items-center gap-2 pl-2.5 pr-3 py-1.5 rounded-none bg-surface border border-border text-xs font-mono font-medium text-foreground hover:border-accent focus:border-accent focus:outline-none transition-all duration-200 shadow-sm cursor-pointer uppercase"
                   aria-label="Select Language"
-                  className="pl-7 pr-7 py-1.5 rounded-none bg-surface border border-border text-xs font-mono font-medium text-foreground hover:border-accent focus:border-accent focus:outline-none transition-all duration-200 shadow-sm cursor-pointer appearance-none uppercase"
                 >
-                  <option value="en" className="bg-background text-foreground font-mono">EN</option>
-                  <option value="id" className="bg-background text-foreground font-mono">ID</option>
-                </select>
-                <div className="absolute right-2.5 pointer-events-none text-foreground-muted text-[10px]">▼</div>
+                  <Globe size={13} className="text-accent" />
+                  <span>{language}</span>
+                  <motion.span
+                    animate={{ rotate: langDropdownOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-[10px] text-foreground-muted ml-0.5"
+                  >
+                    ▼
+                  </motion.span>
+                </button>
+
+                <AnimatePresence>
+                  {langDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                      transition={{ duration: 0.15, ease: "easeOut" }}
+                      className="absolute right-0 mt-1.5 w-36 bg-background/95 backdrop-blur-xl border border-border shadow-xl z-50 overflow-hidden"
+                    >
+                      <div className="py-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLanguage("en");
+                            setLangDropdownOpen(false);
+                          }}
+                          className={cn(
+                            "w-full flex items-center justify-between px-3 py-2 text-xs font-mono text-left transition-colors",
+                            language === "en"
+                              ? "bg-accent/10 text-accent font-semibold"
+                              : "text-foreground hover:bg-surface"
+                          )}
+                        >
+                          <span className="whitespace-nowrap">English (EN)</span>
+                          {language === "en" && <span className="text-accent text-[10px]">✓</span>}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLanguage("id");
+                            setLangDropdownOpen(false);
+                          }}
+                          className={cn(
+                            "w-full flex items-center justify-between px-3 py-2 text-xs font-mono text-left transition-colors",
+                            language === "id"
+                              ? "bg-accent/10 text-accent font-semibold"
+                              : "text-foreground hover:bg-surface"
+                          )}
+                        >
+                          <span className="whitespace-nowrap">Indonesia (ID)</span>
+                          {language === "id" && <span className="text-accent text-[10px]">✓</span>}
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Resume Button */}
@@ -220,21 +279,74 @@ export default function Navbar() {
 
               {/* Mobile Language Selector & Resume */}
               <div className="pt-6 flex items-center gap-3">
-                <div className="relative inline-flex items-center flex-1">
-                  <Globe size={14} className="absolute left-3 text-accent pointer-events-none" />
-                  <select
-                    value={language}
-                    onChange={(e) => {
-                      handleLangChange(e);
-                      setMobileMenuOpen(false);
-                    }}
+                <div className="relative flex-1" ref={mobileLangRef}>
+                  <button
+                    type="button"
+                    onClick={() => setMobileLangOpen(!mobileLangOpen)}
+                    className="w-full flex items-center justify-between px-3 py-3 rounded-none bg-surface border border-border text-xs font-mono font-medium text-foreground hover:border-accent focus:border-accent focus:outline-none transition-all duration-200 shadow-sm cursor-pointer uppercase"
                     aria-label="Select Language"
-                    className="w-full pl-8 pr-8 py-3 rounded-none bg-surface border border-border text-xs font-mono font-medium text-foreground hover:border-accent focus:border-accent focus:outline-none transition-all duration-200 shadow-sm cursor-pointer appearance-none uppercase"
                   >
-                    <option value="en" className="bg-background text-foreground font-mono">English (EN)</option>
-                    <option value="id" className="bg-background text-foreground font-mono">Indonesia (ID)</option>
-                  </select>
-                  <div className="absolute right-3 pointer-events-none text-foreground-muted text-[10px]">▼</div>
+                    <div className="flex items-center gap-2">
+                      <Globe size={14} className="text-accent" />
+                      <span>{language === "en" ? "English (EN)" : "Indonesia (ID)"}</span>
+                    </div>
+                    <motion.span
+                      animate={{ rotate: mobileLangOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-[10px] text-foreground-muted"
+                    >
+                      ▼
+                    </motion.span>
+                  </button>
+
+                  <AnimatePresence>
+                    {mobileLangOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        className="absolute bottom-full left-0 right-0 mb-1.5 bg-background/95 backdrop-blur-xl border border-border shadow-xl z-50 overflow-hidden"
+                      >
+                        <div className="py-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setLanguage("en");
+                              setMobileLangOpen(false);
+                              setMobileMenuOpen(false);
+                            }}
+                            className={cn(
+                              "w-full flex items-center justify-between px-3 py-2.5 text-xs font-mono text-left transition-colors",
+                              language === "en"
+                                ? "bg-accent/10 text-accent font-semibold"
+                                : "text-foreground hover:bg-surface"
+                            )}
+                          >
+                            <span className="whitespace-nowrap">English (EN)</span>
+                            {language === "en" && <span className="text-accent text-[10px]">✓</span>}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setLanguage("id");
+                              setMobileLangOpen(false);
+                              setMobileMenuOpen(false);
+                            }}
+                            className={cn(
+                              "w-full flex items-center justify-between px-3 py-2.5 text-xs font-mono text-left transition-colors",
+                              language === "id"
+                                ? "bg-accent/10 text-accent font-semibold"
+                                : "text-foreground hover:bg-surface"
+                            )}
+                          >
+                            <span className="whitespace-nowrap">Indonesia (ID)</span>
+                            {language === "id" && <span className="text-accent text-[10px]">✓</span>}
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <a

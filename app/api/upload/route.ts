@@ -14,6 +14,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const resourceType = (formData.get("resourceType") as string) || "auto"; // image, video, auto
+    const category = (formData.get("category") as string) || "universal";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
         publicId: data.public_id,
         resourceType: data.resource_type || "image",
         filename: file.name,
+        category,
       },
     }).catch(() => {});
 

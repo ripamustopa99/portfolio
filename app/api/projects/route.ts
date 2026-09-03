@@ -55,9 +55,11 @@ export async function GET(request: Request) {
       }
 
       return {
+        id: p.id,
         slug: p.slug,
         title: p.title,
         description: p.description,
+        language: p.language,
         date: p.date.toISOString().split("T")[0],
         thumbnail: p.thumbnail || "",
         animationVideoUrl: p.animationVideoUrl || undefined,

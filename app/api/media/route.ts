@@ -9,6 +9,7 @@ export async function GET(request: Request) {
     const page = Number(searchParams.get("page")) || 1;
     const pageSize = Number(searchParams.get("pageSize")) || 12;
     const search = searchParams.get("search") || "";
+    const category = searchParams.get("category") || "";
 
     const where: Record<string, unknown> = {};
     if (search) {
@@ -16,6 +17,9 @@ export async function GET(request: Request) {
         { filename: { contains: search, mode: "insensitive" } },
         { url: { contains: search, mode: "insensitive" } },
       ];
+    }
+    if (category && category !== "all") {
+      where.category = category;
     }
 
     const [totalCount, media] = await Promise.all([

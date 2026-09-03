@@ -40,9 +40,11 @@ export async function GET(request: Request) {
     const totalPages = Math.ceil(totalCount / pageSize);
 
     const notes = dbNotes.map((n) => ({
+      id: n.id,
       slug: n.slug,
       title: n.title,
       description: n.description,
+      language: n.language,
       date: n.date.toISOString().split("T")[0],
       tags: n.tags,
       content: n.content,

@@ -1,12 +1,13 @@
 // app/dashboard/notes/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Trash2, Edit3, Save, X } from "lucide-react";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Toast from "@/components/ui/Toast";
 import { ResponsiveTable } from "@/components/ui/ResponsiveTable";
 import { Pagination } from "@/components/ui/Pagination";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 interface NoteItem {
   id: string;
@@ -25,6 +26,7 @@ export default function AdminNotesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [languageFilter, setLanguageFilter] = useState("en");
   const [editingNote, setEditingNote] = useState<Partial<NoteItem> | null>(null);
   const [isNew, setIsNew] = useState(false);
 
@@ -32,10 +34,10 @@ export default function AdminNotesPage() {
   const [deleteTarget, setDeleteTarget] = useState<{ slug: string; language: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const fetchNotes = async (page = 1) => {
+  const fetchNotes = useCallback(async (page = 1, lang = "en") => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/notes?language=en&page=${page}&pageSize=10`);
+      const res = await fetch(`/api/notes?language=${lang}&page=${page}&pageSize=10`);
       const data = await res.json();
       if (data && Array.isArray(data.notes)) {
         setNotes(data.notes);
@@ -50,12 +52,12 @@ export default function AdminNotesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchNotes(1);
-  }, []);
+    fetchNotes(1, languageFilter);
+  }, [fetchNotes, languageFilter]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +78,7 @@ export default function AdminNotesPage() {
         setSuccessMessage("Note saved successfully!");
         setEditingNote(null);
         setIsNew(false);
-        fetchNotes(currentPage);
+        fetchNotes(currentPage, languageFilter);
       } else {
         alert("Error: " + data.error);
       }
@@ -96,7 +98,7 @@ export default function AdminNotesPage() {
       const data = await res.json();
       if (data.success) {
         setSuccessMessage("Note deleted successfully!");
-        fetchNotes(currentPage);
+        fetchNotes(currentPage, languageFilter);
       } else {
         alert("Error: " + data.error);
       }
@@ -115,24 +117,37 @@ export default function AdminNotesPage() {
           <h1 className="text-2xl font-bold text-foreground">Manage Notes</h1>
           <p className="text-xs font-mono text-foreground-muted">Create, edit, and publish technical learning logs and articles.</p>
         </div>
-        <button
-          onClick={() => {
-            setEditingNote({
-              slug: "",
-              title: "",
-              description: "",
-              language: "en",
-              date: new Date().toISOString().split("T")[0],
-              tags: ["TypeScript", "Architecture"],
-              content: "## Introduction\n\nWrite note content here...",
-            });
-            setIsNew(true);
-          }}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-none bg-accent text-background text-xs font-mono font-bold hover:opacity-90 transition-opacity w-full sm:w-auto"
-        >
-          <Plus size={16} />
-          <span>New Note</span>
-        </button>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="w-36">
+            <CustomSelect
+              value={languageFilter}
+              onChange={setLanguageFilter}
+              options={[
+                { value: "en", label: "English (EN)" },
+                { value: "id", label: "Indonesian (ID)" },
+              ]}
+              uppercase
+            />
+          </div>
+          <button
+            onClick={() => {
+              setEditingNote({
+                slug: "",
+                title: "",
+                description: "",
+                language: languageFilter,
+                date: new Date().toISOString().split("T")[0],
+                tags: ["TypeScript", "Architecture"],
+                content: "## Introduction\n\nWrite note content here...",
+              });
+              setIsNew(true);
+            }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-none bg-accent text-background text-xs font-mono font-bold hover:opacity-95 transition-opacity flex-1 sm:flex-initial cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>New Note</span>
+          </button>
+        </div>
       </div>
 
       {/* Success Toast Notification */}
@@ -156,7 +171,7 @@ export default function AdminNotesPage() {
             </h2>
             <button
               onClick={() => setEditingNote(null)}
-              className="text-foreground-muted hover:text-foreground"
+              className="text-foreground-muted hover:text-foreground cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -178,14 +193,15 @@ export default function AdminNotesPage() {
 
               <div>
                 <label className="block text-xs font-mono uppercase text-foreground-muted mb-1.5">Language</label>
-                <select
+                <CustomSelect
                   value={editingNote.language || "en"}
-                  onChange={(e) => setEditingNote({ ...editingNote, language: e.target.value })}
-                  className="w-full px-3 py-2 bg-background border border-border text-xs font-mono text-foreground focus:border-accent uppercase"
-                >
-                  <option value="en">English (en)</option>
-                  <option value="id">Indonesian (id)</option>
-                </select>
+                  onChange={(val) => setEditingNote({ ...editingNote, language: val })}
+                  options={[
+                    { value: "en", label: "English (en)" },
+                    { value: "id", label: "Indonesian (id)" },
+                  ]}
+                  uppercase
+                />
               </div>
 
               <div>
@@ -257,13 +273,13 @@ export default function AdminNotesPage() {
               <button
                 type="button"
                 onClick={() => setEditingNote(null)}
-                className="px-4 py-2 bg-surface border border-border text-xs font-mono text-foreground hover:border-accent"
+                className="px-4 py-2 bg-surface border border-border text-xs font-mono text-foreground hover:border-accent cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 px-6 py-2 bg-accent text-background text-xs font-mono font-bold hover:opacity-90"
+                className="inline-flex items-center gap-2 px-6 py-2 bg-accent text-background text-xs font-mono font-bold hover:opacity-95 cursor-pointer"
               >
                 <Save size={14} />
                 <span>Save Note</span>
@@ -278,7 +294,7 @@ export default function AdminNotesPage() {
         data={notes}
         loading={loading}
         keyExtractor={(n) => `${n.slug}-${n.language}`}
-        emptyMessage="No notes found. Click 'New Note' to create one."
+        emptyMessage={`No notes found for language (${languageFilter.toUpperCase()}). Click 'New Note' to create one.`}
         columns={[
           {
             header: "Slug / Title",
@@ -308,13 +324,13 @@ export default function AdminNotesPage() {
                     setEditingNote(n);
                     setIsNew(false);
                   }}
-                  className="p-1.5 bg-surface border border-border text-foreground hover:text-accent hover:border-accent transition-colors"
+                  className="p-1.5 bg-surface border border-border text-foreground hover:text-accent hover:border-accent transition-colors cursor-pointer"
                 >
                   <Edit3 size={14} />
                 </button>
                 <button
                   onClick={() => setDeleteTarget({ slug: n.slug, language: n.language })}
-                  className="p-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                  className="p-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -344,14 +360,14 @@ export default function AdminNotesPage() {
                   setEditingNote(n);
                   setIsNew(false);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-border text-foreground hover:text-accent hover:border-accent transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-border text-foreground hover:text-accent hover:border-accent transition-colors cursor-pointer"
               >
                 <Edit3 size={14} />
                 <span>Edit</span>
               </button>
               <button
                 onClick={() => setDeleteTarget({ slug: n.slug, language: n.language })}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
               >
                 <Trash2 size={14} />
                 <span>Delete</span>
@@ -366,7 +382,7 @@ export default function AdminNotesPage() {
         totalPages={totalPages}
         totalCount={totalCount}
         itemName="notes"
-        onPageChange={(page) => fetchNotes(page)}
+        onPageChange={(page) => fetchNotes(page, languageFilter)}
       />
     </div>
   );
