@@ -69,29 +69,34 @@ export function VisitorActivityCard({ visitor, visitorNumber }: VisitorActivityC
 
       {expanded && (
         <div className="space-y-2 pt-3 border-t border-border animate-slide-down">
-          <div className="text-[11px] font-mono uppercase tracking-wider text-foreground-muted">
-            Full Actions Timeline ({visitor.events.length}):
+          <div className="text-[11px] font-mono uppercase tracking-wider text-foreground-muted flex items-center justify-between">
+            <span>Full Actions Timeline ({visitor.events.length}):</span>
+            {visitor.events.length > 4 && (
+              <span className="text-[10px] text-foreground-subtle">Scroll for more</span>
+            )}
           </div>
-          <div className="space-y-1.5">
+          <div className="max-h-96 overflow-y-auto pr-1 space-y-1.5 md:space-y-0 md:grid md:grid-cols-2 md:gap-2">
             {visitor.events.map((ev) => (
               <div
                 key={ev.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2 rounded-none bg-surface/40 border border-border text-xs font-mono"
+                className="p-2.5 rounded-none bg-surface/40 border border-border text-xs font-mono flex flex-col justify-between gap-1"
               >
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                  <span className="text-foreground font-medium uppercase text-[11px]">
-                    {ev.eventType.replace(/_/g, " ")}
-                  </span>
-                  {ev.target && (
-                    <span className="text-foreground-muted truncate max-w-[280px]">
-                      → {ev.target}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
+                    <span className="text-foreground font-medium uppercase text-[11px] truncate">
+                      {ev.eventType.replace(/_/g, " ")}
                     </span>
-                  )}
+                  </div>
+                  <span className="text-foreground-subtle text-[10px] shrink-0">
+                    {new Date(ev.createdAt).toLocaleString()}
+                  </span>
                 </div>
-                <span className="text-foreground-subtle text-[11px] shrink-0">
-                  {new Date(ev.createdAt).toLocaleString()}
-                </span>
+                {ev.target && (
+                  <span className="text-foreground-muted truncate text-[11px] pl-3.5" title={ev.target}>
+                    → {ev.target}
+                  </span>
+                )}
               </div>
             ))}
           </div>

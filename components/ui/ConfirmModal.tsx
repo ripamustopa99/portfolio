@@ -1,6 +1,8 @@
 // components/ui/ConfirmModal.tsx
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 
@@ -10,20 +12,40 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   title: string;
   message: string;
+  confirmText?: string;
 }
 
-export default function ConfirmModal({ isOpen, onClose, onConfirm, title, message }: ConfirmModalProps) {
-  return (
+export default function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmText = "Delete" }: ConfirmModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="absolute inset-0 bg-background/80 backdrop-blur-md"
+            className="absolute inset-0 bg-background/85 backdrop-blur-md"
           />
 
           {/* Big to Small animation */}
@@ -46,7 +68,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 onClick={onClose}
-                className="px-4 py-2 bg-surface border border-border text-xs font-mono text-foreground hover:border-accent transition-colors"
+                className="px-4 py-2 bg-surface border border-border text-xs font-mono text-foreground hover:border-accent transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -55,14 +77,15 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
                   onConfirm();
                   onClose();
                 }}
-                className="px-6 py-2 bg-red-500 text-white text-xs font-mono font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+                className="px-6 py-2 bg-red-500 text-white text-xs font-mono font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 cursor-pointer"
               >
-                Delete
+                {confirmText}
               </button>
             </div>
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

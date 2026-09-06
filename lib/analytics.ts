@@ -25,6 +25,7 @@ export async function getAnalyticsStats() {
       projectGithubClicks,
       contactClicks,
       recentEvents,
+      webVitalsEvents,
     ] = await Promise.all([
       // Total Page Views
       prisma.analyticsEvent.count({
@@ -69,7 +70,41 @@ export async function getAnalyticsStats() {
         orderBy: { createdAt: "desc" },
         take: 10,
       }),
+      // Web Vitals events
+      prisma.analyticsEvent.findMany({
+        where: { eventType: "web_vital" },
+        orderBy: { createdAt: "desc" },
+        take: 200,
+      }),
     ]);
+
+    // Process Web Vitals averages
+    const vitalsMap: Record<string, { total: number; count: number; ratings: Record<string, number> }> = {};
+    for (const ev of webVitalsEvents) {
+      if (!ev.target) continue;
+      try {
+        const parsed = JSON.parse(ev.target);
+        const { name, value, rating } = parsed;
+        if (!name) continue;
+        if (!vitalsMap[name]) {
+          vitalsMap[name] = { total: 0, count: 0, ratings: { good: 0, "needs-improvement": 0, poor: 0 } };
+        }
+        vitalsMap[name].total += Number(value) || 0;
+        vitalsMap[name].count += 1;
+        if (rating && vitalsMap[name].ratings[rating] !== undefined) {
+          vitalsMap[name].ratings[rating] += 1;
+        }
+      } catch {
+        // ignore parse error
+      }
+    }
+
+    const webVitalsSummary = Object.entries(vitalsMap).map(([name, data]) => ({
+      name,
+      average: Math.round(data.total / data.count),
+      count: data.count,
+      ratings: data.ratings,
+    }));
 
     return {
       totalPageViews,
@@ -80,6 +115,7 @@ export async function getAnalyticsStats() {
       projectGithubClicks,
       contactClicks,
       recentEvents,
+      webVitalsSummary,
     };
   } catch {
     return {
@@ -91,6 +127,7 @@ export async function getAnalyticsStats() {
       projectGithubClicks: [],
       contactClicks: [],
       recentEvents: [],
+      webVitalsSummary: [],
     };
   }
 }

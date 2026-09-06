@@ -7,7 +7,7 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import Toast from "@/components/ui/Toast";
 import { ResponsiveTable } from "@/components/ui/ResponsiveTable";
 import { Pagination } from "@/components/ui/Pagination";
-import CustomSelect from "@/components/ui/CustomSelect";
+import AdminSearchFilter from "@/components/dashboard/AdminSearchFilter";
 
 interface NoteItem {
   id: string;
@@ -27,17 +27,43 @@ export default function AdminNotesPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [languageFilter, setLanguageFilter] = useState("en");
+  const [search, setSearch] = useState("");
   const [editingNote, setEditingNote] = useState<Partial<NoteItem> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [editorTab, setEditorTab] = useState<"edit" | "preview">("edit");
+  const [previewHtml, setPreviewHtml] = useState("");
+  const [loadingPreview, setLoadingPreview] = useState(false);
+
+  const handleTabChange = async (tab: "edit" | "preview") => {
+    setEditorTab(tab);
+    if (tab === "preview") {
+      setLoadingPreview(true);
+      try {
+        const res = await fetch("/api/preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: editingNote?.content || "" }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setPreviewHtml(data.html);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingPreview(false);
+      }
+    }
+  };
 
   // Modals state
   const [deleteTarget, setDeleteTarget] = useState<{ slug: string; language: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const fetchNotes = useCallback(async (page = 1, lang = "en") => {
+  const fetchNotes = useCallback(async (page = 1, lang = "en", searchQuery = "") => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/notes?language=${lang}&page=${page}&pageSize=10`);
+      const res = await fetch(`/api/notes?language=${lang}&page=${page}&pageSize=10&search=${encodeURIComponent(searchQuery)}`);
       const data = await res.json();
       if (data && Array.isArray(data.notes)) {
         setNotes(data.notes);
@@ -56,8 +82,8 @@ export default function AdminNotesPage() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchNotes(1, languageFilter);
-  }, [fetchNotes, languageFilter]);
+    fetchNotes(1, languageFilter, search);
+  }, [fetchNotes, languageFilter, search]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,17 +144,6 @@ export default function AdminNotesPage() {
           <p className="text-xs font-mono text-foreground-muted">Create, edit, and publish technical learning logs and articles.</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <div className="w-36">
-            <CustomSelect
-              value={languageFilter}
-              onChange={setLanguageFilter}
-              options={[
-                { value: "en", label: "English (EN)" },
-                { value: "id", label: "Indonesian (ID)" },
-              ]}
-              uppercase
-            />
-          </div>
           <button
             onClick={() => {
               setEditingNote({
@@ -149,6 +164,14 @@ export default function AdminNotesPage() {
           </button>
         </div>
       </div>
+
+      <AdminSearchFilter
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search notes by title or slug..."
+        languageFilter={languageFilter}
+        onLanguageChange={setLanguageFilter}
+      />
 
       {/* Success Toast Notification */}
       <Toast message={successMessage} onClose={() => setSuccessMessage(null)} />
@@ -178,7 +201,14 @@ export default function AdminNotesPage() {
           </div>
 
           <form onSubmit={handleSave} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center justify-between bg-background border border-border px-4 py-2.5 text-xs font-mono">
+              <span className="text-foreground-muted uppercase">Target Language:</span>
+              <span className="text-accent font-bold uppercase px-2 py-0.5 bg-accent/10 border border-accent/20">
+                {editingNote.language || languageFilter}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-mono uppercase text-foreground-muted mb-1.5">Slug</label>
                 <input
@@ -188,19 +218,6 @@ export default function AdminNotesPage() {
                   onChange={(e) => setEditingNote({ ...editingNote, slug: e.target.value })}
                   placeholder="e.g. typescript-tips"
                   className="w-full px-3 py-2 bg-background border border-border text-xs font-mono text-foreground focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono uppercase text-foreground-muted mb-1.5">Language</label>
-                <CustomSelect
-                  value={editingNote.language || "en"}
-                  onChange={(val) => setEditingNote({ ...editingNote, language: val })}
-                  options={[
-                    { value: "en", label: "English (en)" },
-                    { value: "id", label: "Indonesian (id)" },
-                  ]}
-                  uppercase
                 />
               </div>
 
@@ -251,22 +268,54 @@ export default function AdminNotesPage() {
               />
             </div>
 
-            {/* Single Markdown Textarea Editor */}
+            {/* Single Markdown Textarea Editor with Live Preview */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-mono uppercase text-foreground-muted">
-                  Markdown Content (Single Editor)
-                </label>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5 bg-background border border-border p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange("edit")}
+                    className={`px-3 py-1 text-[11px] font-mono transition-colors cursor-pointer ${
+                      editorTab === "edit" ? "bg-accent text-background font-bold" : "text-foreground-muted hover:text-foreground"
+                    }`}
+                  >
+                    Edit (Markdown)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange("preview")}
+                    className={`px-3 py-1 text-[11px] font-mono transition-colors cursor-pointer ${
+                      editorTab === "preview" ? "bg-accent text-background font-bold" : "text-foreground-muted hover:text-foreground"
+                    }`}
+                  >
+                    Preview HTML
+                  </button>
+                </div>
                 <span className="text-[11px] font-mono text-accent">Supports Markdown & HTML</span>
               </div>
-              <textarea
-                rows={12}
-                required
-                value={editingNote.content || ""}
-                onChange={(e) => setEditingNote({ ...editingNote, content: e.target.value })}
-                placeholder="## Section Title&#10;&#10;Write your note markdown here..."
-                className="w-full p-4 bg-background border border-border text-xs font-mono text-foreground focus:border-accent leading-relaxed"
-              />
+
+              {editorTab === "edit" ? (
+                <textarea
+                  rows={12}
+                  required
+                  value={editingNote.content || ""}
+                  onChange={(e) => setEditingNote({ ...editingNote, content: e.target.value })}
+                  placeholder="## Section Title&#10;&#10;Write your note markdown here..."
+                  className="w-full p-4 bg-background border border-border text-xs font-mono text-foreground focus:border-accent leading-relaxed"
+                />
+              ) : (
+                <div className="w-full p-6 bg-background border border-border min-h-[300px] max-h-[500px] overflow-y-auto prose prose-invert prose-sm max-w-none text-xs">
+                  {loadingPreview ? (
+                    <div className="flex items-center justify-center py-12 text-accent font-mono animate-pulse">
+                      Processing markdown preview...
+                    </div>
+                  ) : previewHtml ? (
+                    <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
+                  ) : (
+                    <span className="text-foreground-subtle italic">Nothing to preview yet...</span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
@@ -382,7 +431,7 @@ export default function AdminNotesPage() {
         totalPages={totalPages}
         totalCount={totalCount}
         itemName="notes"
-        onPageChange={(page) => fetchNotes(page, languageFilter)}
+        onPageChange={(page) => fetchNotes(page, languageFilter, search)}
       />
     </div>
   );

@@ -39,8 +39,8 @@ export default function Navbar() {
   const navLinks = [
     { href: "/", label: t.home },
     { href: "/projects/", label: t.projects },
-    { href: "/notes/", label: t.notes },
     { href: "/about/", label: t.about },
+    { href: "/notes/", label: t.notes },
     { href: "/contact/", label: t.contact },
   ];
 
@@ -150,7 +150,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                  className="inline-flex items-center gap-2 pl-2.5 pr-3 py-1.5 rounded-none bg-surface border border-border text-xs font-mono font-medium text-foreground hover:border-accent focus:border-accent focus:outline-none transition-all duration-200 shadow-sm cursor-pointer uppercase"
+                  className="inline-flex items-center gap-2 pl-2.5 pr-3 py-1.5 rounded-none bg-surface text-xs font-mono font-medium text-foreground hover:bg-surface/80 focus:outline-none transition-all duration-200 cursor-pointer uppercase"
                   aria-label="Select Language"
                 >
                   <Globe size={13} className="text-accent" />
@@ -218,11 +218,11 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("resume_download")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-none bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none bg-white text-background text-xs font-semibold hover:bg-white/90 transition-all duration-200 shadow-sm"
               >
-                <FileText size={13} />
+                <FileText size={14} />
                 <span>{t.resume}</span>
-                <ArrowUpRight size={11} className="text-foreground-muted" />
+                <ArrowUpRight size={12} className="text-background/70" />
               </a>
             </div>
           </div>
@@ -265,25 +265,28 @@ export default function Navbar() {
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className={cn(
-                        "block py-3 text-base font-medium transition-colors rounded-none px-3",
+                        "flex items-center justify-between py-3 text-base font-medium transition-colors rounded-none px-3",
                         pathname === link.href
                           ? "text-foreground bg-surface font-semibold"
                           : "text-foreground-muted hover:text-foreground hover:bg-surface/50",
                       )}
                     >
-                      {link.label}
+                      <span>{link.label}</span>
+                      {pathname === link.href && (
+                        <span className="w-2 h-2 rounded-full bg-accent" />
+                      )}
                     </Link>
                   </li>
                 ))}
               </ul>
 
               {/* Mobile Language Selector & Resume */}
-              <div className="pt-6 flex items-center gap-3">
-                <div className="relative flex-1" ref={mobileLangRef}>
+              <div className="pt-6 flex flex-col gap-3">
+                <div className="relative w-full" ref={mobileLangRef}>
                   <button
                     type="button"
                     onClick={() => setMobileLangOpen(!mobileLangOpen)}
-                    className="w-full flex items-center justify-between px-3 py-3 rounded-none bg-surface border border-border text-xs font-mono font-medium text-foreground hover:border-accent focus:border-accent focus:outline-none transition-all duration-200 shadow-sm cursor-pointer uppercase"
+                    className="w-full flex items-center justify-between px-3 py-3 rounded-none bg-surface text-xs font-mono font-medium text-foreground hover:bg-surface/80 focus:outline-none transition-all duration-200 cursor-pointer uppercase"
                     aria-label="Select Language"
                   >
                     <div className="flex items-center gap-2">
@@ -357,11 +360,11 @@ export default function Navbar() {
                     trackEvent("resume_download");
                     setMobileMenuOpen(false);
                   }}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-none bg-surface border border-border text-xs font-medium text-foreground hover:border-accent hover:text-accent transition-all duration-200 shadow-sm"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-none bg-white text-background text-xs font-semibold hover:bg-white/90 transition-all duration-200 shadow-sm"
                 >
                   <FileText size={15} />
                   <span>{t.resume}</span>
-                  <ArrowUpRight size={13} className="text-foreground-muted" />
+                  <ArrowUpRight size={13} className="text-background/70" />
                 </a>
               </div>
             </motion.div>

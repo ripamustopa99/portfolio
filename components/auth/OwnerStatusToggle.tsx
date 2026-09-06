@@ -29,7 +29,7 @@ export default function OwnerStatusToggle({ initialIsOwner }: { initialIsOwner: 
         {isOwner ? <ShieldCheck size={16} className="text-emerald-400" /> : <ShieldAlert size={16} className="text-amber-400" />}
         <span>Owner Tracking Status</span>
       </h3>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="text-sm font-medium text-foreground">
             {isOwner ? "This device is recognized as Owner" : "This device is treated as Visitor"}
@@ -43,7 +43,7 @@ export default function OwnerStatusToggle({ initialIsOwner }: { initialIsOwner: 
         <button
           onClick={toggleOwner}
           disabled={isLoading}
-          className={`px-4 py-2 rounded-none text-xs font-semibold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-none text-xs font-semibold transition-all flex items-center justify-center gap-2 whitespace-nowrap shrink-0 ${
             isOwner
               ? "bg-amber-500/10 border border-amber-500/25 text-amber-400 hover:bg-amber-500/20"
               : "bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20"

@@ -4,12 +4,14 @@ import { getCurrentUser } from "@/lib/auth";
 import { isOwner } from "@/lib/analytics";
 import OwnerStatusToggle from "@/components/auth/OwnerStatusToggle";
 import ChangePasswordForm from "@/components/auth/ChangePasswordForm";
-import Link from "next/link";
-import { User, Clock, ArrowLeft } from "lucide-react";
+import ProfileSettingsForm from "@/components/dashboard/ProfileSettingsForm";
+import { getProfileImageUrl } from "@/lib/settings";
+import { User, Clock } from "lucide-react";
 
 export const metadata = {
   title: "Settings — Admin Dashboard",
-  description: "Manage admin account settings, security, and owner tracking preferences.",
+  description:
+    "Manage admin account settings, security, and owner tracking preferences.",
 };
 
 export default async function SettingsPage() {
@@ -19,24 +21,19 @@ export default async function SettingsPage() {
   }
 
   const ownerStatus = await isOwner();
+  const initialProfileUrl = await getProfileImageUrl();
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-foreground-muted hover:text-accent transition-colors"
-            >
-              <ArrowLeft size={14} />
-              <span>Back to Overview</span>
-            </Link>
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">Settings & Security</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            Settings & Security
+          </h1>
           <p className="text-xs font-mono text-foreground-muted mt-1">
-            Configure owner device analytics exclusion, manage account details, and update your administrator password.
+            Configure owner device analytics exclusion, manage account details,
+            and update your administrator password.
           </p>
         </div>
       </div>
@@ -44,6 +41,11 @@ export default async function SettingsPage() {
       {/* Owner Tracking Status Toggle */}
       <div>
         <OwnerStatusToggle initialIsOwner={ownerStatus} />
+      </div>
+
+      {/* Profile Photo Settings */}
+      <div>
+        <ProfileSettingsForm initialProfileUrl={initialProfileUrl} />
       </div>
 
       {/* Change Password Form */}

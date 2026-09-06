@@ -15,7 +15,6 @@ export default function Hero() {
     <section className="relative min-h-[85vh] flex items-center pt-32 sm:pt-40 md:pt-48 pb-24 overflow-hidden">
       <div className="container-custom relative z-10 w-full">
         <motion.div
-          key={language}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -23,16 +22,18 @@ export default function Hero() {
         >
           <ParallaxSection offset={20}>
             <div>
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent block py-1">
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-accent block py-1.5 leading-relaxed">
                 {`// ${t.role.toUpperCase()}`}
               </span>
             </div>
           </ParallaxSection>
 
           <ParallaxSection offset={15}>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.08]">
-              {language === "en" ? "Building high-performance" : "Membangun sistem"}
-              <span className="block text-gradient mt-3">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.18] pb-1">
+              {language === "en"
+                ? "Building high-performance"
+                : "Membangun sistem"}
+              <span className="block text-gradient mt-2 pb-1">
                 {language === "en" ? "scalable systems." : "berkinerja tinggi."}
               </span>
             </h1>

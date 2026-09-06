@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getAnalyticsStats, getVisitorActivityLogs, isOwner } from "@/lib/analytics";
 import OwnerWelcomeModal from "@/components/auth/OwnerWelcomeModal";
 import Link from "next/link";
-import { Terminal, BarChart3, Users, Eye, Download, ExternalLink, Code2, ArrowRight } from "lucide-react";
+import { Terminal, BarChart3, Users, Eye, Download, ExternalLink, Code2, ArrowRight, Zap } from "lucide-react";
 import { VisitorActivityCard } from "@/components/ui/VisitorActivityCard";
 
 export const metadata = {
@@ -45,7 +45,7 @@ export default async function DashboardPage({
           </div>
           <h1 className="text-2xl font-bold text-foreground">Overview</h1>
           <p className="text-xs font-mono text-foreground-muted mt-1">
-            Welcome back, {user.email}. Monitor real-time visitor metrics, project engagement, and owner device exclusion settings.
+            Welcome back, {user.email}. Monitor real-time visitor metrics, project engagement, and real-user Web Vitals performance.
           </p>
         </div>
       </div>
@@ -92,6 +92,40 @@ export default async function DashboardPage({
             </div>
             <p className="text-[11px] text-foreground-subtle">Clicks, views & actions</p>
           </div>
+        </div>
+
+        {/* Real-User Web Vitals Performance Section */}
+        <div className="bg-surface/30 border border-border rounded-none p-4 sm:p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h3 className="text-xs font-mono uppercase tracking-wider text-foreground-muted flex items-center gap-2">
+              <Zap size={16} className="text-accent shrink-0" />
+              <span>Real-User Core Web Vitals (Performance Monitoring)</span>
+            </h3>
+            <span className="text-[11px] font-mono text-emerald-400 shrink-0">Live RUM Active</span>
+          </div>
+
+          {stats.webVitalsSummary.length === 0 ? (
+            <p className="text-xs text-foreground-subtle py-6 text-center">
+              No Web Vitals metrics recorded yet. Visit public pages to generate real-user performance data.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {stats.webVitalsSummary.map((vital) => (
+                <div key={vital.name} className="bg-background/50 border border-border p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold text-foreground">{vital.name}</span>
+                    <span className="font-mono text-xs text-accent">
+                      {vital.name === "CLS" ? (vital.average / 1000).toFixed(3) : `${vital.average}ms`}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-foreground-muted flex justify-between">
+                    <span>Samples: {vital.count}</span>
+                    <span className="text-emerald-400 font-mono">Good: {vital.ratings.good || 0}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Project Breakdown & Contact Clicks */}
@@ -141,14 +175,14 @@ export default async function DashboardPage({
 
         {/* Visitor Activity Timeline Preview */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h3 className="text-xs font-mono uppercase tracking-wider text-foreground-muted flex items-center gap-2">
-              <Users size={16} className="text-accent" />
+              <Users size={16} className="text-accent shrink-0" />
               <span>Visitor Activity & Action Timeline (Recent)</span>
             </h3>
             <Link
               href="/dashboard/visitors"
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-accent hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-mono text-accent hover:underline shrink-0"
             >
               <span>View All Visitors</span>
               <ArrowRight size={14} />

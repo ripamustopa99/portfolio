@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   try {
     // Get client IP for rate limiting
     const forwardedFor = request.headers.get("x-forwarded-for");
-    const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1";
+    const ip = forwardedFor ? forwardedFor.split(",")[0]?.trim() || "127.0.0.1" : "127.0.0.1";
     const rateKey = `login_ip_${ip}`;
     
     // Check if IP is currently blocked due to too many failed attempts

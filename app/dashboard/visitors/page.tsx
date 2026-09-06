@@ -2,15 +2,15 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getPaginatedVisitorLogs } from "@/lib/analytics";
-import Link from "next/link";
-import { Users, ArrowLeft } from "lucide-react";
+import { Users } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 import { VisitorActivityCard } from "@/components/ui/VisitorActivityCard";
 import VisitorFilterBar from "@/components/dashboard/VisitorFilterBar";
 
 export const metadata = {
   title: "Visitor Activity — Admin Dashboard",
-  description: "Detailed chronological visitor activity logs and analytics timeline.",
+  description:
+    "Detailed chronological visitor activity logs and analytics timeline.",
 };
 
 export default async function VisitorsPage({
@@ -28,30 +28,26 @@ export default async function VisitorsPage({
   const search = params.search || "";
   const eventType = params.eventType || "";
 
-  const { visitors, totalCount, totalPages, currentPage } = await getPaginatedVisitorLogs({
-    page,
-    pageSize: 10,
-    search,
-    eventType,
-  });
+  const { visitors, totalCount, totalPages, currentPage } =
+    await getPaginatedVisitorLogs({
+      page,
+      pageSize: 10,
+      search,
+      eventType,
+    });
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-foreground-muted hover:text-accent transition-colors"
-            >
-              <ArrowLeft size={14} />
-              <span>Back to Overview</span>
-            </Link>
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">Visitor Activity Management</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            Visitor Activity Management
+          </h1>
           <p className="text-xs font-mono text-foreground-muted mt-1">
-            Complete chronological audit trail of visitor engagement, project views, downloads, and contact actions. ({totalCount} total visitors tracked)
+            Complete chronological audit trail of visitor engagement, project
+            views, downloads, and contact actions. ({totalCount} total visitors
+            tracked)
           </p>
         </div>
       </div>
@@ -63,7 +59,9 @@ export default async function VisitorsPage({
       <div className="space-y-4">
         <h3 className="text-xs font-mono uppercase tracking-wider text-foreground-muted flex items-center gap-2">
           <Users size={16} className="text-accent" />
-          <span>Visitor Logs & Timelines (Page {currentPage} of {totalPages || 1})</span>
+          <span>
+            Visitor Logs & Timelines (Page {currentPage} of {totalPages || 1})
+          </span>
         </h3>
 
         {visitors.length === 0 ? (
@@ -91,7 +89,9 @@ export default async function VisitorsPage({
           totalPages={totalPages}
           totalCount={totalCount}
           itemName="visitors"
-          buildHref={(targetPage) => `/dashboard/visitors?page=${targetPage}${search ? `&search=${encodeURIComponent(search)}` : ""}${eventType ? `&eventType=${eventType}` : ""}`}
+          buildHref={(targetPage) =>
+            `/dashboard/visitors?page=${targetPage}${search ? `&search=${encodeURIComponent(search)}` : ""}${eventType ? `&eventType=${eventType}` : ""}`
+          }
         />
       </div>
     </div>

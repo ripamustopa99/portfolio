@@ -1,9 +1,34 @@
 // components/sections/AboutSection.tsx
+import { Suspense } from "react";
 import Image from "next/image";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import GlowButton from "@/components/ui/GlowButton";
 import { getLang } from "@/lib/get-lang";
 import { translations } from "@/lib/translations";
+import { getProfileImageUrl } from "@/lib/settings";
+import { ProfileSkeleton } from "@/components/ui/ProfileSkeleton";
+
+async function ProfileImageAsync() {
+  const profileUrl = await getProfileImageUrl();
+
+  return (
+    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-none border border-border bg-background-elevated shadow-xl">
+      <Image
+        src={profileUrl}
+        alt="Ripa Mustopa A"
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, 500px"
+        priority
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      <div className="absolute bottom-6 left-6 right-6 text-white">
+        <div className="font-bold text-xl">Ripa Mustopa A</div>
+        <div className="text-xs font-mono text-accent">CS Student & Web Developer</div>
+      </div>
+    </div>
+  );
+}
 
 export default async function AboutSection() {
   const lang = await getLang();
@@ -24,22 +49,11 @@ export default async function AboutSection() {
         </ScrollReveal>
 
         <div className="grid md:grid-cols-[1fr_1.5fr] gap-12 lg:gap-16 items-center">
-          {/* Left: Profile Photo Card */}
+          {/* Left: Profile Photo Card with Suspense */}
           <ScrollReveal>
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-none border border-border bg-background-elevated shadow-xl">
-              <Image
-                src="/images/profile.jpg"
-                alt="Ripa Mustopa A"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 500px"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 text-white">
-                <div className="font-bold text-xl">Ripa Mustopa A</div>
-                <div className="text-xs font-mono text-accent">CS Student & Web Developer</div>
-              </div>
-            </div>
+            <Suspense fallback={<ProfileSkeleton />}>
+              <ProfileImageAsync />
+            </Suspense>
           </ScrollReveal>
 
           {/* Right: Bio and Action */}

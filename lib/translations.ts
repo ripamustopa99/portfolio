@@ -9,7 +9,7 @@ export const translations = {
       about: "About",
       contact: "Contact",
       resume: "Resume",
-      analytics: "Analytics",
+      analytics: "Internal",
     },
     hero: {
       greeting: "Hi, I'm Ripa Mustopa A",
@@ -107,6 +107,13 @@ export const translations = {
       desc: "The page you are looking for doesn't exist or has been moved.",
       backHome: "Back to Home",
     },
+    errorPage: {
+      badge: "SYSTEM EXCEPTION",
+      title: "Something went wrong",
+      desc: "An unexpected error occurred in the system runtime. You can try resetting the state or return to the homepage.",
+      tryAgain: "Try Again",
+      returnHome: "Return Home",
+    },
   },
   id: {
     nav: {
@@ -116,7 +123,7 @@ export const translations = {
       about: "Tentang",
       contact: "Kontak",
       resume: "Resume",
-      analytics: "Analitik",
+      analytics: "Internal",
     },
     hero: {
       greeting: "Halo, saya Ripa Mustopa A",
@@ -213,6 +220,13 @@ export const translations = {
       title: "Halaman Tidak Ditemukan",
       desc: "Halaman yang Anda cari tidak ada atau telah dipindahkan.",
       backHome: "Kembali ke Beranda",
+    },
+    errorPage: {
+      badge: "PENGECUALIAN SISTEM",
+      title: "Terjadi Kesalahan",
+      desc: "Terjadi kesalahan tak terduga pada runtime sistem. Anda dapat mencoba memuat ulang status atau kembali ke beranda.",
+      tryAgain: "Coba Lagi",
+      returnHome: "Kembali ke Beranda",
     },
   },
 };

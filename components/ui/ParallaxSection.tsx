@@ -26,7 +26,7 @@ export default function ParallaxSection({
   const y = useTransform(scrollYProgress, [0, 1], [-offset, offset]);
 
   return (
-    <div ref={ref} className={`relative overflow-hidden ${className}`}>
+    <div ref={ref} className={`relative overflow-visible ${className}`}>
       <motion.div style={{ y }} className="will-change-transform">
         {children}
       </motion.div>

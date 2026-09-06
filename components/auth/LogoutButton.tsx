@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { LogOut, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 interface LogoutButtonProps {
   isCollapsed?: boolean;
@@ -12,6 +13,7 @@ interface LogoutButtonProps {
 export default function LogoutButton({ isCollapsed = false }: LogoutButtonProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -34,20 +36,31 @@ export default function LogoutButton({ isCollapsed = false }: LogoutButtonProps)
   };
 
   return (
-    <button
-      onClick={handleLogout}
-      disabled={isLoading}
-      title="Sign Out"
-      className="w-full inline-flex items-center gap-2 px-3 py-2.5 rounded-none bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all text-xs font-mono disabled:opacity-50 overflow-hidden"
-    >
-      {isLoading ? <Loader2 size={16} className="animate-spin shrink-0" /> : <LogOut size={16} className="shrink-0" />}
-      <span
-        className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap ${
-          isCollapsed ? "md:opacity-0 md:w-0" : "md:opacity-100 md:w-auto"
-        }`}
+    <>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        disabled={isLoading}
+        title="Sign Out"
+        className="w-full inline-flex items-center gap-2 px-3 py-2.5 rounded-none bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all text-xs font-mono disabled:opacity-50 overflow-hidden cursor-pointer"
       >
-        Sign Out
-      </span>
-    </button>
+        {isLoading ? <Loader2 size={16} className="animate-spin shrink-0" /> : <LogOut size={16} className="shrink-0" />}
+        <span
+          className={`transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap ${
+            isCollapsed ? "md:opacity-0 md:w-0" : "md:opacity-100 md:w-auto"
+          }`}
+        >
+          Sign Out
+        </span>
+      </button>
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleLogout}
+        title="Sign Out"
+        message="Are you sure you want to sign out of the dashboard? You will need to log in again to access admin features."
+        confirmText="Sign Out"
+      />
+    </>
   );
 }

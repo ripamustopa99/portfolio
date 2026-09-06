@@ -30,7 +30,7 @@ export default function WhatIBuild() {
 
   return (
     <section className="section-padding min-h-[75vh] flex items-center relative overflow-hidden border-t border-border/40">
-      <div className="container-custom relative z-10 w-full" key={language}>
+      <div className="container-custom relative z-10 w-full">
         <ScrollReveal>
           <div className="max-w-2xl mb-16">
             <p className="font-mono text-sm text-accent mb-3 tracking-wide">

@@ -40,6 +40,14 @@ model RateLimit {
    @@map("rate_limits")
 }
 
+model Setting {
+   key       String   @id
+   value     String
+   updatedAt DateTime @updatedAt @map("updated_at")
+
+   @@map("settings")
+}
+
 model AnalyticsEvent {
    id        String   @id @default(uuid())
    eventType String   @map("event_type")

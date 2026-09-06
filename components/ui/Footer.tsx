@@ -48,27 +48,24 @@ export default function Footer() {
               {t.navTitle}
             </h3>
             <ul className="space-y-2.5">
-              {siteConfig.navLinks.map((link) => {
-                let label = link.label;
-                if (link.href === "/") label = navT.home;
-                if (link.href === "/projects/") label = navT.projects;
-                if (link.href === "/notes/") label = navT.notes;
-                if (link.href === "/about/") label = navT.about;
-                if (link.href === "/contact/") label = navT.contact;
-
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-foreground-muted hover:text-foreground transition-colors inline-flex items-center group"
-                    >
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">
-                        {label}
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
+              {[
+                { href: "/", label: navT.home },
+                { href: "/projects/", label: navT.projects },
+                { href: "/about/", label: navT.about },
+                { href: "/notes/", label: navT.notes },
+                { href: "/contact/", label: navT.contact },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-foreground-muted hover:text-foreground transition-colors inline-flex items-center group"
+                  >
+                    <span className="group-hover:translate-x-1 transition-transform duration-200">
+                      {link.label}
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 

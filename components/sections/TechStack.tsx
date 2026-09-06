@@ -45,7 +45,7 @@ export default function TechStack() {
 
   return (
     <section className="section-padding border-t border-border/40 relative overflow-hidden">
-      <div className="container-custom relative z-10" key={language}>
+      <div className="container-custom relative z-10">
         <ScrollReveal>
           <div className="max-w-2xl mb-16">
             <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent mb-3">

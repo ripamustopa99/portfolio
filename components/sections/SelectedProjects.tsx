@@ -35,7 +35,7 @@ export default async function SelectedProjects() {
         </ScrollReveal>
 
         {projects.length === 0 ? (
-          <div className="text-center py-16 border border-border rounded-2xl bg-surface/50">
+          <div className="text-center py-16 border border-border bg-surface/50">
             <p className="text-foreground-muted text-base">{t.emptyMessage}</p>
           </div>
         ) : (

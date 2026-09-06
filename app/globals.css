@@ -2,17 +2,30 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
+  /* ==========================================
+   * 1. DOMINANT COLORS (Backgrounds & Surfaces)
+   * ========================================== */
   --color-background: #09090b;
   --color-background-elevated: #121215;
   --color-background-hover: #18181b;
+  --color-surface: #121215;
 
+  /* ==========================================
+   * 2. NEUTRAL & TEXT COLORS
+   * ========================================== */
   --color-foreground: #fafafa;
   --color-foreground-muted: #a1a1aa;
   --color-foreground-subtle: #71717a;
 
+  /* ==========================================
+   * 3. BORDER COLORS
+   * ========================================== */
   --color-border: #27272a;
   --color-border-hover: #3f3f46;
 
+  /* ==========================================
+   * 4. ACCENT COLORS
+   * ========================================== */
   --color-accent: #38bdf8;
   --color-accent-muted: #0284c7;
   --color-accent-glow: rgba(56, 189, 248, 0.15);
@@ -110,7 +123,7 @@
   }
 
   .text-gradient {
-    @apply bg-gradient-to-b from-foreground to-foreground-muted bg-clip-text text-transparent;
+    @apply bg-gradient-to-b from-foreground to-foreground-muted bg-clip-text text-transparent pb-1 inline-block;
   }
 
   .glow-subtle {

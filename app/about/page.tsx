@@ -4,6 +4,7 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 import ParallaxSection from "@/components/ui/ParallaxSection";
 import { getLang } from "@/lib/get-lang";
 import { translations } from "@/lib/translations";
+import { getProfileImageUrl } from "@/lib/settings";
 
 export async function generateMetadata() {
   const lang = await getLang();
@@ -19,6 +20,7 @@ export default async function AboutPage() {
   const lang = await getLang();
   const t = translations[lang as "en" | "id"].aboutPage;
   const sectionT = translations[lang as "en" | "id"].aboutSection;
+  const profileUrl = await getProfileImageUrl();
 
   const experiences = lang === "en" ? [
     {
@@ -96,7 +98,7 @@ export default async function AboutPage() {
             <ScrollReveal>
               <div className="relative aspect-[4/5] w-full overflow-hidden rounded-none border border-border bg-background-elevated shadow-xl">
                 <Image
-                  src="/images/profile.jpg"
+                  src={profileUrl}
                   alt="Ripa Mustopa A"
                   fill
                   priority

@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 export async function GET(request: Request) {
   try {
@@ -128,6 +129,9 @@ export async function POST(request: Request) {
       },
     });
 
+    revalidatePath("/");
+    revalidatePath("/projects");
+
     return NextResponse.json({ success: true, project });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -153,6 +157,9 @@ export async function DELETE(request: Request) {
     await prisma.project.delete({
       where: { slug_language: { slug, language } },
     });
+
+    revalidatePath("/");
+    revalidatePath("/projects");
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {

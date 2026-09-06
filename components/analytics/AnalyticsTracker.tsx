@@ -13,19 +13,34 @@ export default function AnalyticsTracker() {
       return;
     }
 
-    const trackPageView = async () => {
+    const trackPageView = () => {
       try {
-        await fetch("/api/analytics/track", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ eventType: "page_view", target: pathname }),
-        });
+        const data = JSON.stringify({ eventType: "page_view", target: pathname });
+        if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+          const blob = new Blob([data], { type: "application/json" });
+          navigator.sendBeacon("/api/analytics/track", blob);
+        } else {
+          fetch("/api/analytics/track", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: data,
+            keepalive: true,
+          }).catch(() => {});
+        }
       } catch {
         // Ignore tracking errors
       }
     };
 
-    trackPageView();
+    // Defer tracking until browser is idle or after initial animations settle
+    if (typeof window !== "undefined") {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(() => trackPageView(), { timeout: 2000 });
+      } else {
+        const timer = setTimeout(trackPageView, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
   }, [pathname]);
 
   return null;

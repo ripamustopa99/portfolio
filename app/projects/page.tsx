@@ -1,7 +1,8 @@
 // app/projects/page.tsx
-import { getAllProjects } from "@/lib/projects";
+import { getPaginatedProjects } from "@/lib/projects";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import ProjectCard from "@/components/ui/ProjectCard";
+import { Pagination } from "@/components/ui/Pagination";
 import { getLang } from "@/lib/get-lang";
 import { translations } from "@/lib/translations";
 
@@ -13,10 +14,18 @@ export async function generateMetadata() {
   };
 }
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   const lang = await getLang();
   const t = translations[lang as "en" | "id"].projectsPage;
-  const projects = await getAllProjects(lang);
+  const params = await searchParams;
+  const page = Number(params?.page) || 1;
+  const pageSize = 10;
+
+  const { projects, totalCount, totalPages } = await getPaginatedProjects(lang, page, pageSize);
 
   return (
     <div className="pt-32 pb-24">
@@ -34,14 +43,24 @@ export default async function ProjectsPage() {
         </ScrollReveal>
 
         {projects.length === 0 ? (
-          <div className="text-center py-20 border border-border rounded-2xl bg-surface/50">
+          <div className="text-center py-20 border border-border bg-surface/50">
             <p className="text-foreground-muted text-base">{t.emptyMessage}</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-            {projects.map((project, index) => (
-              <ProjectCard key={project.slug} project={project} index={index} />
-            ))}
+          <div className="space-y-12">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+              {projects.map((project, index) => (
+                <ProjectCard key={project.slug} project={project} index={index} />
+              ))}
+            </div>
+
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              totalCount={totalCount}
+              itemName={lang === "en" ? "projects" : "proyek"}
+              buildHref={(p) => `/projects/?page=${p}`}
+            />
           </div>
         )}
       </div>

@@ -2,11 +2,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Upload, Trash2, Copy, Check, Image as ImageIcon, Video, Search, Plus, X, Maximize2 } from "lucide-react";
+import { Upload, Trash2, Copy, Check, Image as ImageIcon, Video, Plus, X, Maximize2 } from "lucide-react";
 import Toast from "@/components/ui/Toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { Pagination } from "@/components/ui/Pagination";
+import AdminSearchFilter from "@/components/dashboard/AdminSearchFilter";
 import CustomSelect from "@/components/ui/CustomSelect";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MediaItem {
   id: string;
@@ -33,7 +35,8 @@ export default function AdminMediaPage() {
   const [copiedMdId, setCopiedMdId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [previewItem, setPreviewItem] = useState<MediaItem | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -60,6 +63,16 @@ export default function AdminMediaPage() {
     fetchMedia(1, search, categoryFilter);
   }, [fetchMedia, search, categoryFilter]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && previewItem) {
+        setPreviewItem(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [previewItem]);
+
   const processFiles = async (files: FileList | File[]) => {
     if (!files || files.length === 0) return;
 
@@ -67,6 +80,7 @@ export default function AdminMediaPage() {
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+        if (!file) continue;
         const formData = new FormData();
         formData.append("file", file);
         formData.append("resourceType", file.type.startsWith("video/") ? "video" : "image");
@@ -78,15 +92,18 @@ export default function AdminMediaPage() {
         });
         const data = await res.json();
         if (!data.success) {
-          alert(`Upload failed for ${file.name}: ${data.error}`);
+          setToastType("error");
+          setToastMessage(`Upload failed for ${file.name}: ${data.error}`);
         }
       }
-      setSuccessMessage("Files uploaded successfully!");
+      setToastType("success");
+      setToastMessage("Files uploaded successfully!");
       setIsUploadOpen(false);
       fetchMedia(currentPage, search, categoryFilter);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error";
-      alert("Upload error: " + message);
+      setToastType("error");
+      setToastMessage("Upload error: " + message);
     } finally {
       setUploading(false);
     }
@@ -108,23 +125,37 @@ export default function AdminMediaPage() {
 
   const confirmDelete = async () => {
     if (!deleteTarget) return;
+    const targetId = deleteTarget;
+    setDeleteTarget(null);
+
+    const previousMediaList = [...mediaList];
+    const previousTotalCount = totalCount;
+
+    // Optimistic update
+    setMediaList((prev) => prev.filter((item) => item.id !== targetId));
+    setTotalCount((prev) => Math.max(0, prev - 1));
 
     try {
-      const res = await fetch(`/api/media?id=${deleteTarget}`, {
+      const res = await fetch(`/api/media?id=${targetId}`, {
         method: "DELETE",
       });
       const data = await res.json();
       if (data.success) {
-        setSuccessMessage("Media deleted successfully!");
+        setToastType("success");
+        setToastMessage("Media asset successfully deleted from Cloudinary & database.");
         fetchMedia(currentPage, search, categoryFilter);
       } else {
-        alert("Error: " + data.error);
+        setMediaList(previousMediaList);
+        setTotalCount(previousTotalCount);
+        setToastType("error");
+        setToastMessage(data.error || "Failed to delete media asset.");
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      alert("Error: " + message);
-    } finally {
-      setDeleteTarget(null);
+      setMediaList(previousMediaList);
+      setTotalCount(previousTotalCount);
+      const message = err instanceof Error ? err.message : "Network error";
+      setToastType("error");
+      setToastMessage(`Network connection error: ${message}. Deletion aborted.`);
     }
   };
 
@@ -157,7 +188,7 @@ export default function AdminMediaPage() {
         </button>
       </div>
 
-      <Toast message={successMessage} onClose={() => setSuccessMessage(null)} />
+      <Toast message={toastMessage} onClose={() => setToastMessage(null)} type={toastType} />
 
       <ConfirmModal
         isOpen={Boolean(deleteTarget)}
@@ -168,62 +199,78 @@ export default function AdminMediaPage() {
       />
 
       {/* Fullscreen Preview Lightbox Modal */}
-      {previewItem && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-surface border border-border p-6 max-w-4xl w-full space-y-4 relative shadow-2xl">
-            <div className="flex items-center justify-between pb-3 border-b border-border">
-              <div className="text-xs font-mono text-foreground font-medium truncate max-w-lg" title={previewItem.filename || previewItem.url}>
-                {previewItem.filename || "Media Preview"}
-              </div>
-              <button
-                onClick={() => setPreviewItem(null)}
-                className="text-foreground-muted hover:text-foreground cursor-pointer p-1"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-center bg-background border border-border min-h-[300px] max-h-[70vh] overflow-hidden p-2">
-              {previewItem.resourceType === "video" || previewItem.url.match(/\.(mp4|mov|webm)$/i) ? (
-                <video
-                  src={previewItem.url}
-                  controls
-                  autoPlay
-                  className="max-h-[65vh] w-full object-contain"
-                />
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={previewItem.url}
-                  alt={previewItem.filename || "Preview"}
-                  className="max-h-[65vh] w-auto object-contain"
-                />
-              )}
-            </div>
-
-            <div className="flex items-center justify-between pt-2 text-xs font-mono">
-              <span className="text-accent uppercase text-[10px] px-2 py-0.5 bg-accent/10 border border-accent/20">
-                {previewItem.category} • {previewItem.resourceType}
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => copyToClipboard(previewItem.url, previewItem.id, "url")}
-                  className="px-3 py-1.5 bg-surface border border-border text-foreground hover:border-accent transition-colors flex items-center gap-1 cursor-pointer"
-                >
-                  {copiedId === previewItem.id ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                  <span>{copiedId === previewItem.id ? "Copied" : "Copy URL"}</span>
-                </button>
+      <AnimatePresence>
+        {previewItem && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setPreviewItem(null)}
+              className="absolute inset-0 bg-background/85 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ scale: 1.08, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 1.08, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="relative bg-surface border border-border p-6 max-w-4xl w-full space-y-4 shadow-2xl z-10"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-border">
+                <div className="text-xs font-mono text-foreground font-medium truncate max-w-lg" title={previewItem.filename || previewItem.url}>
+                  {previewItem.filename || "Media Preview"}
+                </div>
                 <button
                   onClick={() => setPreviewItem(null)}
-                  className="px-4 py-1.5 bg-accent text-background font-bold hover:opacity-90 cursor-pointer"
+                  className="text-foreground-muted hover:text-foreground cursor-pointer p-1"
                 >
-                  Close
+                  <X size={20} />
                 </button>
               </div>
-            </div>
+
+              <div className="flex items-center justify-center bg-background border border-border min-h-[300px] max-h-[70vh] overflow-hidden p-2">
+                {previewItem.resourceType === "video" || previewItem.url.match(/\.(mp4|mov|webm)$/i) ? (
+                  <video
+                    src={previewItem.url}
+                    controls
+                    autoPlay
+                    className="max-h-[65vh] w-full object-contain"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={previewItem.url}
+                    alt={previewItem.filename || "Preview"}
+                    className="max-h-[65vh] w-auto object-contain"
+                  />
+                )}
+              </div>
+
+              <div className="flex items-center justify-between pt-2 text-xs font-mono">
+                <span className="text-accent uppercase text-[10px] px-2 py-0.5 bg-accent/10 border border-accent/20">
+                  {previewItem.category} • {previewItem.resourceType}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => copyToClipboard(previewItem.url, previewItem.id, "url")}
+                    className="px-3 py-1.5 bg-surface border border-border text-foreground hover:border-accent transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    {copiedId === previewItem.id ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                    <span>{copiedId === previewItem.id ? "Copied" : "Copy URL"}</span>
+                  </button>
+                  <button
+                    onClick={() => setPreviewItem(null)}
+                    className="px-4 py-1.5 bg-accent text-background font-bold hover:opacity-90 cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* Inline Upload Drawer */}
       {isUploadOpen && (
@@ -252,6 +299,7 @@ export default function AdminMediaPage() {
                   { value: "universal", label: "Universal (General)" },
                   { value: "projects", label: "Projects" },
                   { value: "notes", label: "Notes" },
+                  { value: "profile", label: "Profile" },
                 ]}
                 uppercase
               />
@@ -298,32 +346,21 @@ export default function AdminMediaPage() {
       )}
 
       {/* Search & Filter Bar */}
-      <div className="bg-surface/30 border border-border p-4 flex flex-col sm:flex-row items-center gap-3">
-        <div className="relative flex-1 w-full">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted pointer-events-none" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by filename or URL..."
-            className="w-full pl-9 pr-4 py-2 rounded-none bg-background border border-border text-xs font-mono text-foreground focus:border-accent focus:outline-none transition-colors"
-          />
-        </div>
-
-        <div className="w-full sm:w-48">
-          <CustomSelect
-            value={categoryFilter}
-            onChange={setCategoryFilter}
-            options={[
-              { value: "all", label: "All Categories" },
-              { value: "universal", label: "Universal" },
-              { value: "projects", label: "Projects" },
-              { value: "notes", label: "Notes" },
-            ]}
-            uppercase
-          />
-        </div>
-      </div>
+      <AdminSearchFilter
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search by filename or URL..."
+        selectValue={categoryFilter}
+        onSelectChange={setCategoryFilter}
+        options={[
+          { value: "all", label: "All Categories" },
+          { value: "universal", label: "Universal" },
+          { value: "projects", label: "Projects" },
+          { value: "notes", label: "Notes" },
+          { value: "profile", label: "Profile" },
+        ]}
+        uppercase
+      />
 
       {/* Media Grid */}
       {loading ? (
@@ -347,7 +384,7 @@ export default function AdminMediaPage() {
                 {/* Preview Thumbnail / Video */}
                 <div
                   onClick={() => setPreviewItem(item)}
-                  className="relative h-56 bg-background flex items-center justify-center overflow-hidden border-b border-border cursor-pointer group/thumb"
+                  className="relative h-40 bg-background flex items-center justify-center overflow-hidden border-b border-border cursor-pointer group/thumb"
                   title="Click to preview fullscreen"
                 >
                   {isVideo ? (
@@ -394,33 +431,33 @@ export default function AdminMediaPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-border">
+                  <div className="flex items-center gap-1.5 pt-2 border-t border-border">
                     <button
                       onClick={() => copyToClipboard(item.url, item.id, "url")}
-                      className="px-2 py-1 bg-surface border border-border text-foreground hover:border-accent transition-colors flex items-center justify-center gap-1 text-[10px] cursor-pointer"
+                      className="flex-1 px-2 py-1.5 bg-surface border border-border text-foreground hover:border-accent transition-colors flex items-center justify-center gap-1 text-[11px] cursor-pointer"
                       title="Copy URL"
                     >
-                      {copiedId === item.id ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
-                      <span>{copiedId === item.id ? "Copied" : "Copy URL"}</span>
+                      {copiedId === item.id ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                      <span className="truncate">{copiedId === item.id ? "Copied" : "URL"}</span>
                     </button>
 
                     <button
                       onClick={() => copyToClipboard(markdownSnippet, item.id, "markdown")}
-                      className="px-2 py-1 bg-surface border border-border text-foreground hover:border-accent transition-colors flex items-center justify-center gap-1 text-[10px] cursor-pointer"
+                      className="flex-1 px-2 py-1.5 bg-surface border border-border text-foreground hover:border-accent transition-colors flex items-center justify-center gap-1 text-[11px] cursor-pointer"
                       title="Copy Markdown tag"
                     >
-                      {copiedMdId === item.id ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
-                      <span>{copiedMdId === item.id ? "Markdown" : "Copy MD"}</span>
+                      {copiedMdId === item.id ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                      <span className="truncate">{copiedMdId === item.id ? "Markdown" : "MD"}</span>
+                    </button>
+
+                    <button
+                      onClick={() => setDeleteTarget(item.id)}
+                      className="px-2.5 py-1.5 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors flex items-center justify-center text-[11px] cursor-pointer"
+                      title="Delete asset"
+                    >
+                      <Trash2 size={12} />
                     </button>
                   </div>
-
-                  <button
-                    onClick={() => setDeleteTarget(item.id)}
-                    className="w-full py-1 bg-surface border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors flex items-center justify-center gap-1 text-[10px] cursor-pointer"
-                  >
-                    <Trash2 size={11} />
-                    <span>Delete</span>
-                  </button>
                 </div>
               </div>
             );

@@ -1,7 +1,7 @@
 // components/dashboard/DashboardSidebar.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -22,17 +22,12 @@ import { useDashboard } from "./DashboardContext";
 
 interface DashboardSidebarProps {
   userEmail?: string;
+  initialCollapsed?: boolean;
 }
 
-export default function DashboardSidebar({ userEmail }: DashboardSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export default function DashboardSidebar({ userEmail, initialCollapsed = false }: DashboardSidebarProps) {
+  const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("dashboard_sidebar_collapsed");
-    if (saved === "true") {
-      setIsCollapsed(true);
-    }
-  }, []);
   const { isMobileOpen, setIsMobileOpen } = useDashboard();
   const pathname = usePathname();
 
@@ -40,6 +35,7 @@ export default function DashboardSidebar({ userEmail }: DashboardSidebarProps) {
     const next = !isCollapsed;
     setIsCollapsed(next);
     localStorage.setItem("dashboard_sidebar_collapsed", String(next));
+    document.cookie = `dashboard_sidebar_collapsed=${next}; path=/; max-age=31536000`;
   };
 
   const navItems = [

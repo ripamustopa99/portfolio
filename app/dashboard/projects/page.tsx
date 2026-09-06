@@ -7,8 +7,8 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import Toast from "@/components/ui/Toast";
 import { ResponsiveTable } from "@/components/ui/ResponsiveTable";
 import { Pagination } from "@/components/ui/Pagination";
+import AdminSearchFilter from "@/components/dashboard/AdminSearchFilter";
 import Link from "next/link";
-import CustomSelect from "@/components/ui/CustomSelect";
 
 interface ProjectItem {
   id: string;
@@ -33,17 +33,43 @@ export default function AdminProjectsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [languageFilter, setLanguageFilter] = useState("en");
+  const [search, setSearch] = useState("");
   const [editingProject, setEditingProject] = useState<Partial<ProjectItem> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [editorTab, setEditorTab] = useState<"edit" | "preview">("edit");
+  const [previewHtml, setPreviewHtml] = useState("");
+  const [loadingPreview, setLoadingPreview] = useState(false);
+
+  const handleTabChange = async (tab: "edit" | "preview") => {
+    setEditorTab(tab);
+    if (tab === "preview") {
+      setLoadingPreview(true);
+      try {
+        const res = await fetch("/api/preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: editingProject?.content || "" }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setPreviewHtml(data.html);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingPreview(false);
+      }
+    }
+  };
 
   // Modals state
   const [deleteTarget, setDeleteTarget] = useState<{ slug: string; language: string } | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const fetchProjects = useCallback(async (page = 1, lang = "en") => {
+  const fetchProjects = useCallback(async (page = 1, lang = "en", searchQuery = "") => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/projects?language=${lang}&page=${page}&pageSize=10`);
+      const res = await fetch(`/api/projects?language=${lang}&page=${page}&pageSize=10&search=${encodeURIComponent(searchQuery)}`);
       const data = await res.json();
       if (data && Array.isArray(data.projects)) {
         setProjects(data.projects);
@@ -62,8 +88,8 @@ export default function AdminProjectsPage() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchProjects(1, languageFilter);
-  }, [fetchProjects, languageFilter]);
+    fetchProjects(1, languageFilter, search);
+  }, [fetchProjects, languageFilter, search]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,8 +97,8 @@ export default function AdminProjectsPage() {
       alert("Slug and Title are required");
       return;
     }
-    if (!editingProject?.thumbnail && !editingProject?.animationVideoUrl) {
-      alert("Please provide at least a Thumbnail Image URL or an Animation Video URL.");
+    if (!editingProject?.thumbnail) {
+      alert("Thumbnail Image URL is required.");
       return;
     }
 
@@ -127,27 +153,16 @@ export default function AdminProjectsPage() {
           <h1 className="text-2xl font-bold text-foreground">Manage Projects</h1>
           <p className="text-xs font-mono text-foreground-muted">Create, edit, and publish bilingual projects with Media Library URLs & markdown.</p>
         </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 w-full sm:w-auto">
           <Link
             href="/dashboard/media"
-            className="inline-flex sm:hidden items-center justify-center gap-1.5 px-3 py-2.5 bg-surface border border-border text-foreground text-xs font-mono hover:border-accent transition-colors w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 bg-surface border border-border text-foreground text-xs font-mono hover:border-accent transition-colors"
             title="Open Media Library to copy URLs"
           >
-            <ImageIcon size={14} className="text-accent" />
-            <span>Media Library</span>
-            <ExternalLink size={12} className="text-foreground-muted" />
+            <ImageIcon size={14} className="text-accent shrink-0" />
+            <span className="truncate">Media</span>
+            <ExternalLink size={12} className="text-foreground-muted shrink-0" />
           </Link>
-          <div className="w-36">
-            <CustomSelect
-              value={languageFilter}
-              onChange={setLanguageFilter}
-              options={[
-                { value: "en", label: "English (EN)" },
-                { value: "id", label: "Indonesian (ID)" },
-              ]}
-              uppercase
-            />
-          </div>
           <button
             onClick={() => {
               setEditingProject({
@@ -166,13 +181,21 @@ export default function AdminProjectsPage() {
               });
               setIsNew(true);
             }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-none bg-accent text-background text-xs font-mono font-bold hover:opacity-95 transition-opacity flex-1 sm:flex-initial cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-none bg-accent text-background text-xs font-mono font-bold hover:opacity-95 transition-opacity cursor-pointer truncate"
           >
-            <Plus size={16} />
-            <span>New Project</span>
+            <Plus size={16} className="shrink-0" />
+            <span className="truncate">New Project</span>
           </button>
         </div>
       </div>
+
+      <AdminSearchFilter
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search projects by title or slug..."
+        languageFilter={languageFilter}
+        onLanguageChange={setLanguageFilter}
+      />
 
       {/* Success Toast Notification */}
       <Toast message={successMessage} onClose={() => setSuccessMessage(null)} />
@@ -202,7 +225,14 @@ export default function AdminProjectsPage() {
           </div>
 
           <form onSubmit={handleSave} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center justify-between bg-background border border-border px-4 py-2.5 text-xs font-mono">
+              <span className="text-foreground-muted uppercase">Target Language:</span>
+              <span className="text-accent font-bold uppercase px-2 py-0.5 bg-accent/10 border border-accent/20">
+                {editingProject.language || languageFilter}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-mono uppercase text-foreground-muted mb-1.5">Slug</label>
                 <input
@@ -212,19 +242,6 @@ export default function AdminProjectsPage() {
                   onChange={(e) => setEditingProject({ ...editingProject, slug: e.target.value })}
                   placeholder="e.g. saas-dashboard"
                   className="w-full px-3 py-2 bg-background border border-border text-xs font-mono text-foreground focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono uppercase text-foreground-muted mb-1.5">Language</label>
-                <CustomSelect
-                  value={editingProject.language || "en"}
-                  onChange={(val) => setEditingProject({ ...editingProject, language: val })}
-                  options={[
-                    { value: "en", label: "English (en)" },
-                    { value: "id", label: "Indonesian (id)" },
-                  ]}
-                  uppercase
                 />
               </div>
 
@@ -280,11 +297,12 @@ export default function AdminProjectsPage() {
               <div className="space-y-2">
                 <label className="block text-xs font-mono uppercase text-foreground-muted flex items-center gap-1.5">
                   <ImageIcon size={14} className="text-accent" />
-                  <span>Thumbnail Image URL</span>
+                  <span>Thumbnail Image URL <span className="text-accent">*</span></span>
                 </label>
                 <div className="flex items-center gap-3">
                   <input
                     type="text"
+                    required
                     value={editingProject.thumbnail || ""}
                     onChange={(e) => setEditingProject({ ...editingProject, thumbnail: e.target.value })}
                     placeholder="https://res.cloudinary.com/..."
@@ -321,22 +339,54 @@ export default function AdminProjectsPage() {
               </div>
             </div>
 
-            {/* Single Markdown Textarea Editor */}
+            {/* Single Markdown Textarea Editor with Live Preview */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-mono uppercase text-foreground-muted">
-                  Markdown Content (Single Editor)
-                </label>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5 bg-background border border-border p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange("edit")}
+                    className={`px-3 py-1 text-[11px] font-mono transition-colors cursor-pointer ${
+                      editorTab === "edit" ? "bg-accent text-background font-bold" : "text-foreground-muted hover:text-foreground"
+                    }`}
+                  >
+                    Edit (Markdown)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange("preview")}
+                    className={`px-3 py-1 text-[11px] font-mono transition-colors cursor-pointer ${
+                      editorTab === "preview" ? "bg-accent text-background font-bold" : "text-foreground-muted hover:text-foreground"
+                    }`}
+                  >
+                    Preview HTML
+                  </button>
+                </div>
                 <span className="text-[11px] font-mono text-accent">Supports Markdown & HTML</span>
               </div>
-              <textarea
-                rows={12}
-                required
-                value={editingProject.content || ""}
-                onChange={(e) => setEditingProject({ ...editingProject, content: e.target.value })}
-                placeholder="## Overview&#10;&#10;Write your markdown content here..."
-                className="w-full p-4 bg-background border border-border text-xs font-mono text-foreground focus:border-accent leading-relaxed"
-              />
+
+              {editorTab === "edit" ? (
+                <textarea
+                  rows={12}
+                  required
+                  value={editingProject.content || ""}
+                  onChange={(e) => setEditingProject({ ...editingProject, content: e.target.value })}
+                  placeholder="## Overview&#10;&#10;Write your markdown content here..."
+                  className="w-full p-4 bg-background border border-border text-xs font-mono text-foreground focus:border-accent leading-relaxed"
+                />
+              ) : (
+                <div className="w-full p-6 bg-background border border-border min-h-[300px] max-h-[500px] overflow-y-auto prose prose-invert prose-sm max-w-none text-xs">
+                  {loadingPreview ? (
+                    <div className="flex items-center justify-center py-12 text-accent font-mono animate-pulse">
+                      Processing markdown preview...
+                    </div>
+                  ) : previewHtml ? (
+                    <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
+                  ) : (
+                    <span className="text-foreground-subtle italic">Nothing to preview yet...</span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t border-border">
@@ -480,7 +530,7 @@ export default function AdminProjectsPage() {
         totalPages={totalPages}
         totalCount={totalCount}
         itemName="projects"
-        onPageChange={(page) => fetchProjects(page, languageFilter)}
+        onPageChange={(page) => fetchProjects(page, languageFilter, search)}
       />
     </div>
   );

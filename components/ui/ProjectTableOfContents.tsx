@@ -53,7 +53,7 @@ export default function ProjectTableOfContents({
       onHasHeadings(hasEnough);
     }
 
-    if (items.length > 0) {
+    if (items.length > 0 && items[0]) {
       setActiveId(items[0].id);
     }
 

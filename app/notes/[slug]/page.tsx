@@ -33,6 +33,16 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${note.title} — Notes`,
     description: note.description,
+    openGraph: {
+      title: `${note.title} — Notes`,
+      description: note.description,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${note.title} — Notes`,
+      description: note.description,
+    },
   };
 }
 

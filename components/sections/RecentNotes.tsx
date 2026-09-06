@@ -17,9 +17,7 @@ export default async function RecentNotes() {
         <ScrollReveal>
           <div className="flex items-end justify-between mb-12">
             <div>
-              <p className="font-mono text-sm text-accent mb-3">
-                {t.badge}
-              </p>
+              <p className="font-mono text-sm text-accent mb-3">{t.badge}</p>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                 {t.title}
               </h2>
@@ -35,7 +33,7 @@ export default async function RecentNotes() {
         </ScrollReveal>
 
         {notes.length === 0 ? (
-          <div className="text-center py-16 border border-border rounded-2xl bg-surface/50">
+          <div className="text-center py-16 border border-border bg-surface/50">
             <p className="text-foreground-muted text-base">{t.emptyMessage}</p>
           </div>
         ) : (

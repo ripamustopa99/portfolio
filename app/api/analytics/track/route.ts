@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     }
 
     const forwardedFor = request.headers.get("x-forwarded-for");
-    const ipAddress = forwardedFor ? forwardedFor.split(",")[0].trim() : "127.0.0.1";
+    const ipAddress = forwardedFor ? forwardedFor.split(",")[0]?.trim() || "127.0.0.1" : "127.0.0.1";
 
     // Deduplication standard for page views per visitor per calendar day
     if (eventType === "page_view") {
