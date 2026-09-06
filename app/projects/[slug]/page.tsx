@@ -153,7 +153,7 @@ export default async function CaseStudyPage({ params }: Props) {
                             {stack.category}
                           </span>
                           <div className="flex flex-wrap gap-2">
-                            {stack.items.map((item) => (
+                            {(stack.items || []).map((item) => (
                               <span key={item} className="text-sm text-foreground">
                                 {item}
                               </span>
