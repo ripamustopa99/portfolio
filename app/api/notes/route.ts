@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function GET(request: Request) {
   try {
@@ -100,6 +100,7 @@ export async function POST(request: Request) {
 
     revalidatePath("/");
     revalidatePath("/notes");
+    revalidateTag("notes", "max");
 
     return NextResponse.json({ success: true, note });
   } catch (error: unknown) {
@@ -129,6 +130,7 @@ export async function DELETE(request: Request) {
 
     revalidatePath("/");
     revalidatePath("/notes");
+    revalidateTag("notes", "max");
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {

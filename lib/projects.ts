@@ -20,7 +20,14 @@ export const getAllProjects = unstable_cache(
       return dbProjects.map((p) => {
         let techStack = [];
         try {
-          techStack = p.techStack ? JSON.parse(p.techStack) : [];
+          const parsed = p.techStack ? JSON.parse(p.techStack) : [];
+          if (Array.isArray(parsed)) {
+            if (parsed.length > 0 && typeof parsed[0] === "string") {
+              techStack = [{ category: "Technologies", items: parsed }];
+            } else {
+              techStack = parsed;
+            }
+          }
         } catch {
           techStack = [];
         }
@@ -77,7 +84,14 @@ export const getProjectBySlug = unstable_cache(
 
       let techStack = [];
       try {
-        techStack = p.techStack ? JSON.parse(p.techStack) : [];
+        const parsed = p.techStack ? JSON.parse(p.techStack) : [];
+        if (Array.isArray(parsed)) {
+          if (parsed.length > 0 && typeof parsed[0] === "string") {
+            techStack = [{ category: "Technologies", items: parsed }];
+          } else {
+            techStack = parsed;
+          }
+        }
       } catch {
         techStack = [];
       }

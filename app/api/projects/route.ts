@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function GET(request: Request) {
   try {
@@ -43,7 +43,14 @@ export async function GET(request: Request) {
     const projects = dbProjects.map((p) => {
       let techStack = [];
       try {
-        techStack = p.techStack ? JSON.parse(p.techStack) : [];
+        const parsed = p.techStack ? JSON.parse(p.techStack) : [];
+        if (Array.isArray(parsed)) {
+          if (parsed.length > 0 && typeof parsed[0] === "string") {
+            techStack = [{ category: "Technologies", items: parsed }];
+          } else {
+            techStack = parsed;
+          }
+        }
       } catch {
         techStack = [];
       }
@@ -131,6 +138,7 @@ export async function POST(request: Request) {
 
     revalidatePath("/");
     revalidatePath("/projects");
+    revalidateTag("projects", "max");
 
     return NextResponse.json({ success: true, project });
   } catch (error: unknown) {
@@ -160,6 +168,7 @@ export async function DELETE(request: Request) {
 
     revalidatePath("/");
     revalidatePath("/projects");
+    revalidateTag("projects", "max");
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
